@@ -1,4 +1,4 @@
-import Nav from "./Nav.js";
+import Nav from "./Nav/Nav.js";
 import Database from "./../Database.js";
 
 export default class UI {

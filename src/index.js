@@ -1,5 +1,6 @@
 import Database from "./Database.js";
 import UI from "./uiComponents/UI.js";
+import "reset-css";
 
 const database = new Database();
 

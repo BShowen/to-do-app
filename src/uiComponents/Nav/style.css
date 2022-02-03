@@ -1,0 +1,54 @@
+:root{
+  --main-nav-bg: #E6E6E6;
+  --default-project-bg: #CFCFCF;
+}
+
+#navContainer{
+  width: 280px;
+  min-height: 100vh;
+  height: 100vh;
+}
+
+#navContainer nav{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 100%;
+  background-color: var(--main-nav-bg);
+}
+
+#defaultProjectsContainer{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 15px;
+}
+
+/* Default project buttons */
+#defaultProjectsContainer > div {
+  background-color: var(--default-project-bg);
+  flex-basis: 80px;
+  padding: 10px;
+  height: 60px;
+  flex-grow: 1;
+}
+
+#projectsContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+}
+
+/* Button containers */
+#projectsContainer > div {
+  width: 100%;
+}
+
+#projectsContainer > div > button {
+  padding: 5px 10px 5px 20px;
+  width: 100%;
+  text-align: left;
+}
