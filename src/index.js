@@ -1,7 +1,8 @@
-function helloWorld(){
-  const h2 = document.createElement("h2");
-  h2.innerText = "Hello World";
-  return h2;
-}
+import Database from "./Database.js";
+import UI from "./uiComponents/UI.js";
 
-document.body.appendChild(helloWorld());
+const database = new Database();
+
+const rootNode = document.querySelector("body");
+const ui = new UI(rootNode);
+ui.render();
