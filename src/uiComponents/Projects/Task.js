@@ -1,12 +1,12 @@
 export default class Task{
-  #subject;
-  #body;
-  #dueDate; //String MM/DD/YYYY
+  #subject = document.createElement("p");
+  #body = document.createElement("p");
+  #dueDate = document.createElement("p"); //String MM/DD/YYYY
 
   constructor({subject, body, dueDate}){
-    this.#subject = subject || "";
-    this.#body = body || "";
-    this.#dueDate = dueDate || "";
+    this.#subject.innerText = subject || "";
+    this.#body.innerText = body || "";
+    this.#dueDate.innerText = dueDate || "";
   }
 
   set subject(newSubject){
@@ -38,11 +38,11 @@ export default class Task{
   }
 
   render(){
-    return {
-      subject: this.#subject, 
-      body: this.#body, 
-      dueDate: this.#dueDate
-    }
+    const container = document.createElement("div");
+    container.appendChild(this.#subject);
+    container.appendChild(this.#body);
+    container.appendChild(this.#dueDate);
+    return container;
   }
 
   toJSON(){

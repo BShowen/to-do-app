@@ -1,9 +1,5 @@
-import Database from "./Database.js";
-import UI from "./uiComponents/UI.js";
+import App from "./App.js";
 import "reset-css";
+import "./app.css";
 
-const database = new Database();
-
-const rootNode = document.querySelector("body");
-const ui = new UI(rootNode);
-ui.render();
+new App().render();

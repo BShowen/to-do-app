@@ -1,37 +1,37 @@
 import NavButton from "./NavButton.js";
 import DefaultProject from "./DefaultProject.js";
+import NewProjectButton from "./NewProjectButton.js";
 import "./style.css";
 
 
 
 /**
  * 
- * The nav component should create a nav element. It should return an HTML node
- * that can easily be appended to the DOM. 
+ * A class that renders the apps navigation panel along with its children. The
+ * nav's children are projects - which render out as buttons that can be clicked
  * 
  */
 export default class Nav {
 
-  #container;
-  #containerTitle;
-  #nav;
-  #projectsContainer;
+  #container = document.createElement("div");
+  #containerTitle = document.createElement("p");
+  #nav = document.createElement("nav");
+  #projectsContainer = document.createElement("div");
+  #newProjectButton;
 
-  constructor() {
-    this.#container = document.createElement("div");
+  constructor(projects) {
     this.#container.id = "navContainer";
-    this.#containerTitle = document.createElement("p");
     this.#containerTitle.innerText = "My Lists";
-    this.#nav = document.createElement("nav");
-    this.#projectsContainer = document.createElement("div");
     this.#projectsContainer.id = "projectsContainer";
+    this.#newProjectButton = new NewProjectButton().render();
     this.#loadDefaultProjects();
+    this.#appendChildren(projects);
   }
 
-  appendChildren(projects) {
+  #appendChildren(projects) {
     for (const projectID in projects) {
       this.#projectsContainer.appendChild(
-        new NavButton(projects[projectID]).render()
+        new NavButton(projects[projectID], projectID).render()
       );
     }
   }
@@ -49,6 +49,7 @@ export default class Nav {
   render() {
     this.#projectsContainer.insertAdjacentElement('afterBegin', this.#containerTitle);
     this.#nav.appendChild(this.#projectsContainer);
+    this.#nav.appendChild(this.#newProjectButton);
     this.#container.appendChild(this.#nav);
     return this.#container;
   }
