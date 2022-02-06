@@ -19,16 +19,16 @@ export default class Nav {
   #projectsContainer = document.createElement("div");
   #newProjectButton;
 
-  constructor(projects) {
+  constructor() {
     this.#container.id = "navContainer";
     this.#containerTitle.innerText = "My Lists";
     this.#projectsContainer.id = "projectsContainer";
     this.#newProjectButton = new NewProjectButton().render();
     this.#loadDefaultProjects();
-    this.#appendChildren(projects);
   }
 
-  #appendChildren(projects) {
+  #loadUserProjects(projects) {
+    this.#projectsContainer.innerHTML = "";
     for (const projectID in projects) {
       this.#projectsContainer.appendChild(
         new NavButton(projects[projectID], projectID).render()
@@ -46,7 +46,8 @@ export default class Nav {
     this.#nav.appendChild(container);
   }
 
-  render() {
+  render(projects) {
+    this.#loadUserProjects(projects);
     this.#projectsContainer.insertAdjacentElement('afterBegin', this.#containerTitle);
     this.#nav.appendChild(this.#projectsContainer);
     this.#nav.appendChild(this.#newProjectButton);

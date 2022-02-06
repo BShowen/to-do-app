@@ -11,9 +11,10 @@ export default class App {
   // UI elements (HTML nodes)
   #rootNode = document.querySelector("body");
   #contentBody = document.createElement("div");
+  #nav;
 
   // Modal
-  #modalWindow = new ModalWindow();
+  #modalWindow;
 
   constructor() {
     this.#db = new Database();
@@ -23,7 +24,9 @@ export default class App {
   }
 
   #initializeModals() {
-    this.#modalWindow = new ModalWindow();
+    this.#modalWindow = new ModalWindow({
+      save: this.#saveNewProject.bind(this),
+    });
     emitter.on(
       "addList",
       this.#modalWindow.render.bind(this.#modalWindow)
@@ -38,9 +41,24 @@ export default class App {
     );
   }
 
+  /**
+   * This is the callback that gets called when the user submits the new 
+   * project form. 
+   */
+  #saveNewProject(formData = {}){
+    const project = { ...Object.assign({}, formData), tasks: {}};
+    const savedProjectID = this.#db.saveProject(project);
+    this.#renderNav();
+    this.#loadTasks(savedProjectID);
+  }
+
   #renderNav() {
-    const nav = new Nav(this.#db.getAllProjects());
-    this.#rootNode.appendChild(nav.render());
+    this.#nav = this.#nav || new Nav();
+    const projects =  this.#db.getAllProjects();
+    this.#rootNode.insertAdjacentElement(
+      'afterBegin', 
+      this.#nav.render(projects)
+    );
   }
 
   #renderAllTasks() {

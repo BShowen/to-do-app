@@ -38,6 +38,7 @@ export default class Database {
     const index = Object.keys(this.#parsedLocalStorage).length;
     this.#parsedLocalStorage[index] = newProject;
     this.#saveToLocalStorage();
+    return index;
   }
 
   getAllProjects() {
@@ -93,9 +94,8 @@ const db = {
       }
     },
   },
-  2: {
-    name: "Test",
-    tasks: {}
-  }
 }
-localStorage.setItem('todoApp', JSON.stringify(db));
+if(!localStorage.getItem('todoApp')){
+  localStorage.setItem('todoApp', JSON.stringify(db));
+  console.log("Loaded default data");
+}

@@ -5,16 +5,25 @@ export default class ModalWindow {
 
   #modalContainer = document.createElement("div");
   #modalForm;
+  #body = document.querySelector("body");
 
-  constructor() {
+  constructor(callbacks = {}) {
     this.#modalContainer.id = "modalContainer";
-    this.#modalForm = new ModalForm();
+   
+    this.#modalForm = new ModalForm({
+      cancel: this.#destroy.bind(this), 
+      save: callbacks['save'],
+    });
+
+  }
+
+  #destroy() {
+    this.#modalContainer.remove();
   }
 
   render() {
-    const body = document.querySelector("body");
     this.#modalContainer.appendChild(this.#modalForm.render());
-    body.appendChild(this.#modalContainer);
+    this.#body.appendChild(this.#modalContainer);
     this.#modalForm.focus();
   }
 }
