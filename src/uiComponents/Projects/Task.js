@@ -39,6 +39,7 @@ export default class Task{
 
   render(){
     const container = document.createElement("div");
+    container.classList.add("task");
     container.appendChild(this.#subject);
     container.appendChild(this.#body);
     container.appendChild(this.#dueDate);

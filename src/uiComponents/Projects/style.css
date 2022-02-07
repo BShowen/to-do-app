@@ -2,12 +2,27 @@
   --border-style: 1px solid grey;
 }
 
-#contentBody {
+#content {
   width: 100%;
   padding: 5px;
+
+  /* This is positioned ancestor in which #newTaskFormWindow's 
+  position is relative to */
+  position: relative; 
 }
 
-.projectContainer {
+#headerContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding: 10px;
+  align-items: center;
+}
+#headerContainer > button {
+  z-index: 3;
+}
+
+.project {
   padding: 5px;
 }
 
@@ -23,4 +38,25 @@
 
 .tasksContainer > div {
   border-bottom: var(--border-style);
+}
+
+#newTaskForm {
+  z-index: 3;
+  position: relative;
+  min-height: 95px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  background-color: #FFF;
+}
+
+#newTaskFormWindow {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
 }

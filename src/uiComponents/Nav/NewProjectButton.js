@@ -12,7 +12,7 @@ export default class NewProjectButton {
   }
 
   #handleClick() {
-    emitter.emit("addList");
+    emitter.emit("newProject");
   }
 
   render() {

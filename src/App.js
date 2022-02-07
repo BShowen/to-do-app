@@ -1,26 +1,21 @@
 import Nav from "./uiComponents/Nav/Nav.js";
-import TaskContainer from "./uiComponents/Projects/ProjectContainer.js";
-import Database from "./Database.js";
+import database from "./database.js";
 import emitter from "./eventEmitter.js";
 import ModalWindow from "./uiComponents/Modal/ModalWindow.js";
+import PageContainer from "./uiComponents/Projects/PageContainer.js";
 
 export default class App {
-  // Attribute that hold reference to database. 
-  #db;
-
   // UI elements (HTML nodes)
   #rootNode = document.querySelector("body");
-  #contentBody = document.createElement("div");
   #nav;
 
   // Modal
   #modalWindow;
 
   constructor() {
-    this.#db = new Database();
-    this.#contentBody.id = "contentBody";
-    emitter.on("loadTasks", this.#loadTasks.bind(this));
     this.#initializeModals();
+    this.#renderNav();
+    this.#renderProjects();
   }
 
   #initializeModals() {
@@ -28,16 +23,8 @@ export default class App {
       save: this.#saveNewProject.bind(this),
     });
     emitter.on(
-      "addList",
+      "newProject", //emitted from NewProjectButton.js
       this.#modalWindow.render.bind(this.#modalWindow)
-    );
-  }
-
-  #loadTasks(projectID) {
-    const project = this.#db.getProject({ projectID });
-    this.#contentBody.innerHTML = '';
-    this.#contentBody.appendChild(
-      new TaskContainer(project).render()
     );
   }
 
@@ -45,34 +32,25 @@ export default class App {
    * This is the callback that gets called when the user submits the new 
    * project form. 
    */
-  #saveNewProject(formData = {}){
-    const project = { ...Object.assign({}, formData), tasks: {}};
-    const savedProjectID = this.#db.saveProject(project);
+  #saveNewProject(formData = {}) {
+    const project = { ...Object.assign({}, formData, {default: false}), tasks: {} };
+    const savedProjectID = database.saveProject(project);
     this.#renderNav();
-    this.#loadTasks(savedProjectID);
+    emitter.emit("loadTasks", savedProjectID);
   }
 
   #renderNav() {
-    this.#nav = this.#nav || new Nav();
-    const projects =  this.#db.getAllProjects();
+    this.#nav = this.#nav || new Nav(); // Instantiate the Nav class only once. 
+    const projects = database.getAllProjects();
     this.#rootNode.insertAdjacentElement(
-      'afterBegin', 
+      'afterBegin',
       this.#nav.render(projects)
     );
   }
 
-  #renderAllTasks() {
-    const projects = this.#db.getAllProjects();
-    for (const projectID in projects) {
-      this.#contentBody.appendChild(
-        new TaskContainer(projects[projectID]).render()
-      );
-    }
-    this.#rootNode.appendChild(this.#contentBody);
-  }
-
-  render() {
-    this.#renderNav();
-    this.#renderAllTasks();
+  #renderProjects(){
+    this.#rootNode.appendChild(
+      new PageContainer().render()
+    );
   }
 }
