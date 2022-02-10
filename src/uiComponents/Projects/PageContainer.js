@@ -9,6 +9,7 @@ export default class PageContainer {
   #headerButton = document.createElement("button");
   #projectsContainer = document.createElement("div");
   #headerButtonCallback;
+  #projects = [];
 
   constructor() {
     // Configure node data
@@ -29,16 +30,19 @@ export default class PageContainer {
    * nav. It is responsible for displaying the tasks for the project. 
    */
   #renderProject(projectID) {
+    this.#unmountCurrentProjects();
     this.#projectsContainer.innerHTML = '';
     const project = database.getProject(projectID);
     project.id = projectID;
     const callback = this.#renderProject.bind(this);
-    const projectContainer = new Project(project, callback);
+    const projectContainer = new Project(project, callback, {toggleForm: true});
+    this.#projects.push(projectContainer);
     this.#setCallback(projectContainer);
     this.#projectsContainer.appendChild(projectContainer.render());
   }
 
   #renderAllProjects() {
+    this.#unmountCurrentProjects();
     const projects = database.getAllProjects();
     this.#projectsContainer.innerHTML = '';
     for (const projectID in projects) {
@@ -46,6 +50,7 @@ export default class PageContainer {
       project.id = projectID;
       const callback = this.#renderAllProjects.bind(this);
       const projectContainer = new Project(project, callback);
+      this.#projects.push(projectContainer);
       if (project.default) {
         this.#setCallback(projectContainer);
       }
@@ -69,6 +74,13 @@ export default class PageContainer {
     this.#headerButton.addEventListener('click',
       this.#headerButtonCallback
     );
+  }
+
+  #unmountCurrentProjects(){
+    this.#projects.forEach(element => {
+      element.unmount();
+    });
+    this.#projects = [];  
   }
 
   render() {

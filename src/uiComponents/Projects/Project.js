@@ -2,7 +2,6 @@ import Task from "./Task.js";
 import "./style.css";
 import TaskForm from "./TaskForm.js"
 import database from "../../database.js";
-import emitter from "../../eventEmitter.js";
 
 /**
  * 
@@ -21,7 +20,7 @@ export default class Project {
   // The index if "this" in localStorage
   #id
 
-  constructor(project, callback) {
+  constructor(project, callback, opts = {}) {
     // Set inner text of nodes
     this.#title.innerText = project.name;
 
@@ -35,11 +34,26 @@ export default class Project {
     this.#appendChildren(project.tasks);
     this.clickHandler = this.clickHandler.bind(this);
     this.saveFormData = this.saveFormData.bind(this, callback);
+    this.toggleForm = this.toggleForm.bind(this);
+
+    if(opts['toggleForm']){
+      document.addEventListener('click', this.toggleForm);
+    }
   }
 
   #appendChildren(tasks) {
     for (const taskID in tasks) {
       this.#tasksContainer.appendChild(new Task(tasks[taskID]).render());
+    }
+  }
+
+  unmount(){
+    document.removeEventListener('click', this.toggleForm);
+  }
+
+  toggleForm(evt){
+    if(evt.target.id == 'content'){
+      this.showNewTaskForm();
     }
   }
 
@@ -51,6 +65,7 @@ export default class Project {
     this.#form = new TaskForm();
     this.#formContainer = this.#form.render();
     this.#tasksContainer.appendChild(this.#formContainer);
+    this.#form.focus();
     document.addEventListener('click', this.clickHandler);
   }
 
@@ -79,8 +94,7 @@ export default class Project {
   saveFormData(callback){
     if(this.#form.isValid()){
       const task = this.#form.getData()
-      database.saveTask({projectID: this.#id, task});
-      // emitter.emit("loadTasks", this.#id);
+      database.saveTask({projectID: this.#id, task: task});
       callback(this.#id);
     }
   }
