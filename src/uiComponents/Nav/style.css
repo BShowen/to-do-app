@@ -34,7 +34,7 @@
   flex-grow: 1;
 }
 
-#projectsContainer{
+#projectButtons{
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -43,11 +43,11 @@
 }
 
 /* Button containers */
-#projectsContainer > div {
+#projectButtons > div {
   width: 100%;
 }
 
-#projectsContainer > div > button {
+#projectButtons > div > button {
   padding: 5px 10px 5px 20px;
   width: 100%;
   text-align: left;

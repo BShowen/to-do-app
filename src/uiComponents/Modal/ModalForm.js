@@ -1,4 +1,4 @@
-export default class ModalForm {
+export default class ModalForm extends Component {
 
   #formContainer = document.createElement("div");
 
@@ -13,7 +13,8 @@ export default class ModalForm {
   #submitButton = document.createElement("button");
   #cancelButton = document.createElement("button");
 
-  constructor(callbacks = {}) {
+  constructor(rootNode) {
+    super(rootNode);
     // Set the id attr of nodes
     this.#formContainer.id = "modalFormContainer";
     this.#input.id = "listName";
@@ -29,27 +30,42 @@ export default class ModalForm {
     this.#cancelButton.innerText = "Cancel";
     this.#submitButton.innerText = "OK";
 
-    // Add event listeners 
-    // When the form's cancel button is clicked.
-    this.#cancelButton.addEventListener(
-      'click', 
-      this.#clearForm.bind(this, {
-        cancel: callbacks['cancel'],
-      })
-    );
-    // When the form's submit button is clicked.
-    this.#submitButton.addEventListener(
-      'click',
-      this.#handleSubmit.bind(this, {
-        save: callbacks['save'], 
-        cancel: callbacks['cancel'],
-      })
-    );
-    // When the user types in the input box. 
-    this.#input.addEventListener('input', this.#validateForm.bind(this));
+    this.focus = this.focus.bind(this);
+    emitter.on("newProjectForm-focus", this.focus);
   }
 
-  #validateForm() {
+  mount() {
+    this.keydownHandler = this.keydownHandler.bind(this);
+    this.validateForm = this.validateForm.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    // Listen for when the user to presses the Escape/Enter key.
+    document.addEventListener('keydown', this.keydownHandler);
+    // When the form's cancel button is clicked.
+    this.#cancelButton.addEventListener('click', this.handleCancel);
+    // When the form's submit button is clicked.
+    this.#submitButton.addEventListener('click', this.handleSubmit);
+    // When the user types in the input box. 
+    this.#input.addEventListener('input', this.validateForm);
+  }
+
+  unmount() {
+    document.removeEventListener("keydown", this.keydownHandler);
+  }
+
+  /**
+   * Destroy the modal window when user presses the Escape key.
+   */
+  keydownHandler(event) {
+    if (event.code == "Escape") {
+      this.clearForm();
+      emitter.emit("destroyModalWindow");
+    } else if (event.code == "Enter") {
+      this.handleSubmit();
+    }
+  }
+
+  validateForm() {
     if (this.#input.value.trim().length) {
       this.#submitButton.disabled = false;
       return true;
@@ -59,20 +75,26 @@ export default class ModalForm {
     }
   }
 
-  #handleSubmit(callbacks = {}) {
+  handleSubmit() {
     const formData = {};
-    if (this.#validateForm()) {
+    if (this.validateForm()) {
       formData.name = this.#input.value;
-      callbacks.save(formData);
+      emitter.emit("saveNewProject", formData);
+      this.clearForm();
+      emitter.emit("destroyModalWindow");
+    } else {
+      this.focus();
     }
-    // Hide the modal after submission. 
-    this.#clearForm({cancel: callbacks.cancel});
   }
 
-  #clearForm(callbacks = {}){
+  handleCancel(){
+    this.clearForm();
+    emitter.emit("destroyModalWindow");
+  }
+
+  clearForm() {
     this.#input.value = '';
     this.#submitButton.disabled = true;
-    callbacks.cancel();
   }
 
   focus() {
@@ -80,6 +102,7 @@ export default class ModalForm {
   }
 
   render() {
+    this.mount();
     this.#formContainer.appendChild(this.#titleContainer);
     this.#formContainer.appendChild(this.#inputContainer);
     this.#formContainer.appendChild(this.#buttonContainer);
@@ -91,6 +114,6 @@ export default class ModalForm {
 
     this.#buttonContainer.appendChild(this.#cancelButton);
     this.#buttonContainer.appendChild(this.#submitButton);
-    return this.#formContainer;
+    this.rootNode.appendChild(this.#formContainer);
   }
 }

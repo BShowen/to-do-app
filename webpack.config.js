@@ -1,6 +1,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-console.log(path.resolve(__dirname, 'src/index.js'));
+const webpack = require('webpack');
+
 module.exports = {
   entry: {
     index: path.resolve(__dirname, 'src/index.js'),
@@ -11,7 +12,7 @@ module.exports = {
     host: '0.0.0.0',
     port: 8080,
     static: './dist',
-    open: false,
+    open: true,
     client: {
       overlay: true,
     },
@@ -20,6 +21,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'To-do',
       template: path.resolve(__dirname, 'src/index.html'),
+    }), 
+    new webpack.ProvidePlugin({
+      emitter: ['/src/eventEmitter.js', 'default'],
+      Component: ['/src/uiComponents/Component/Component.js', 'Component'],
     })
   ],
   module: {

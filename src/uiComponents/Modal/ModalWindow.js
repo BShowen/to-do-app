@@ -1,29 +1,40 @@
 import ModalForm from "./ModalForm.js";
 import "./style.css";
 
-export default class ModalWindow {
+export default class ModalWindow extends Component {
 
-  #modalContainer = document.createElement("div");
-  #modalForm;
-  #body = document.querySelector("body");
+  #container;
 
-  constructor(callbacks = {}) {
-    this.#modalContainer.id = "modalContainer";
-   
-    this.#modalForm = new ModalForm({
-      cancel: this.#destroy.bind(this), 
-      save: callbacks['save'],
-    });
-
+  constructor(rootNode) {
+    super(rootNode);
+    
+    this.unmount = this.unmount.bind(this);
+    this.render = this.render.bind(this);
+    emitter.on("addList", this.render);
+    emitter.on("destroyModalWindow", this.unmount);
   }
 
-  #destroy() {
-    this.#modalContainer.remove();
+  mount() {
+    this.#container = document.createElement("div");
+    this.#container.id = "modalContainer";
+
+    this.children.push(new ModalForm(this.#container));
+  }
+
+  unmount() {
+    this.children.forEach(child => {
+      child.unmount();
+    });
+    this.children = [];
+    this.#container.remove();
   }
 
   render() {
-    this.#modalContainer.appendChild(this.#modalForm.render());
-    this.#body.appendChild(this.#modalContainer);
-    this.#modalForm.focus();
+    this.mount();
+    this.children.forEach(child => {
+      child.render();
+    });
+    this.rootNode.appendChild(this.#container);
+    emitter.emit("newProjectForm-focus");
   }
 }

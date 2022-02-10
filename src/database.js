@@ -1,7 +1,6 @@
 const database = (function () {
   /********************  Private variables and methods  ***********************/
-  const _parsedLocalStorage = JSON.parse(localStorage.getItem('todoApp')) ||
-  {
+  const defaultData = {
     0: {
       name: "Personal",
       default: true,
@@ -9,28 +8,58 @@ const database = (function () {
         0: {
           subject: "Wash this dishes",
           body: "Make sure the dish washer is empty first!",
-          dueDate: "02/02/2022"
+          dueDate: "02/15/22"
+        },
+        1: {
+          subject: "Do some homework",
+          body: "But I dont wanna",
+          dueDate: "03/01/22"
         }
       }
     },
     1: {
       name: "Work",
-      default: false, 
+      default: false,
       tasks: {
         0: {
           subject: "Start working on The Odin Project",
           body: "Make sure you understand JavaScript before proceeding",
-          dueDate: "3/15/2022"
+          dueDate: "03/15/22"
         },
         1: {
           subject: "Get those files on the bosses desk",
           body: "I hate that guy...",
-          dueDate: "2/15/2022"
+          dueDate: "02/15/22"
+        }
+      },
+    },
+    2: {
+      name: "Home",
+      default: false,
+      tasks: {
+        0: {
+          subject: "Clean out the close",
+          body: "Get rid of old shirts",
+          dueDate: "03/04/22"
+        },
+        1: {
+          subject: "Clean the bathroom",
+          body: "Bleach the tub",
+          dueDate: "04/02/22"
         }
       },
     },
   };
 
+  const _parseLocalStorage = function (data) {
+    const appData = JSON.parse(localStorage.getItem('todoApp')) || data
+    Object.keys(appData).forEach(index => {
+      appData[index].id = index
+    });
+    return appData;
+  }
+
+  const _parsedLocalStorage = _parseLocalStorage(defaultData);
   /**
    * A method that is used internally by this class. 
    */
@@ -42,16 +71,19 @@ const database = (function () {
 
 
   /**
-   * A method that saves a task as a child to a project. A projectID is required
+   * A method that saves a task as a child to a project. A parentId is required
    * otherwise the task will not be saved. 
    */
-  const saveTask = function ({ projectID, task }) {
-    const project = _parsedLocalStorage[projectID] || null;
+  const saveTask = function (task = {}) {
+    const project = _parsedLocalStorage[task.parentId] || null;
     if (project) {
       const index = Object.keys(project.tasks).length;
-      project.tasks[index] = task;
+      const newTask = { ...task, id: index }
+      project.tasks[index] = newTask;
       _saveToLocalStorage();
+      return newTask;
     }
+    return false;
   }
 
   /**
@@ -61,31 +93,79 @@ const database = (function () {
    */
   const saveProject = function (newProject) {
     const index = Object.keys(_parsedLocalStorage).length;
+    newProject.id = index.toString();
     _parsedLocalStorage[index] = newProject;
     _saveToLocalStorage();
-    return index;
+    return { ..._parsedLocalStorage[index] };
   }
 
+  /**
+   * A function that returns a list of all the projects in storage. 
+   * ex: [ projectObj, projectObj, projectObj ]
+   */
   const getAllProjects = function () {
     return _parsedLocalStorage;
   }
 
-  const getProject = function (projectID) {
-    return _parsedLocalStorage[projectID];
+  /**
+   * projectId = integer
+   * Returns a single project object. 
+   * ex: { projectId: 0, name: ... }
+   */
+  const getProject = function (projectId) {
+    return _parsedLocalStorage[projectId];
   }
 
-  const getTasks = function (projectID) {
-    const project = getProject({ projectID }) || {};
+  const getTasks = function (projectId) {
+    const project = getProject(projectId) || {};
     return project.tasks;
   }
 
+  const updateTask = function (newTask) {
+    let taskUpdated = { success: false, task: {} };
+    const { parentId, id } = newTask;
+    const oldTask = _getTask({ parentId, taskId: id });
+    if (!_areEqualShallow(newTask, oldTask)) {
+      _parsedLocalStorage[parentId].tasks[id] = newTask;
+      _saveToLocalStorage();
+      taskUpdated = { success: true, task: newTask };
+    }
+    return taskUpdated;
+  }
+
+  const _areEqualShallow = function (obj1, obj2) {
+    // Both objects must have same amount of keys. 
+    let same = Object.keys(obj1).length == Object.keys(obj2).length;
+
+    // Both objects keys must all have the same value. 
+    if (same) {
+      Object.keys(obj1).every(key => {
+        same = obj1[key] === obj2[key];
+        return same;
+      });
+    }
+
+    return same;
+  }
+
+  const _getTask = function ({ parentId, taskId }) {
+    return _parsedLocalStorage[parentId].tasks[taskId];
+  }
+
+  const deleteTask = function ({ parentId, taskId }) {
+    const tasks = _parsedLocalStorage[parentId].tasks;
+    delete tasks[taskId];
+    _saveToLocalStorage();
+  }
 
   return {
     saveTask,
+    updateTask,
     saveProject,
     getAllProjects,
     getProject,
     getTasks,
+    deleteTask,
   }
 })();
 

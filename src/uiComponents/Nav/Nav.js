@@ -1,57 +1,128 @@
-import NavButton from "./NavButton.js";
-import DefaultProject from "./DefaultProject.js";
-import NewProjectButton from "./NewProjectButton.js";
+import DefaultProjectButton from "./DefaultProjectButton.js";
+import UserProjectButton from "./UserProjectButton.js";
+import database from "./../../database.js";
 import "./style.css";
 
-
-
 /**
- * 
  * A class that renders the apps navigation panel along with its children. The
  * nav's children are projects - which render out as buttons that can be clicked
- * 
  */
-export default class Nav {
+export default class Nav extends Component {
 
-  #container = document.createElement("div");
-  #containerTitle = document.createElement("p");
-  #nav = document.createElement("nav");
-  #projectsContainer = document.createElement("div");
-  #newProjectButton;
+  /**
+   * The HTML node elements used inside of this class. 
+   */
+  #container
+  #containerTitle
+  #navContainer
+  #defaultButtonsContainer
+  #projectButtonsContainer
+  #componentIsMounted = false;
 
-  constructor() {
+  constructor(rootNode) {
+    super(rootNode)
+  }
+
+  mount() {
+    this.#container = document.createElement("div");
     this.#container.id = "navContainer";
+
+    this.#containerTitle = document.createElement("p");
     this.#containerTitle.innerText = "My Lists";
-    this.#projectsContainer.id = "projectsContainer";
-    this.#newProjectButton = new NewProjectButton().render();
-    this.#loadDefaultProjects();
+
+    this.#navContainer = document.createElement("nav");
+
+    this.#defaultButtonsContainer = document.createElement("div");
+    this.#defaultButtonsContainer.id = "defaultProjectsContainer";
+
+    this.#projectButtonsContainer = document.createElement("div");
+    this.#projectButtonsContainer.id = "projectButtons";
+
+    this.#createDefaultButtons();
+    this.#createUserProjectButtons();
+
+    this.#componentIsMounted = true;
   }
 
-  #loadUserProjects(projects) {
-    this.#projectsContainer.innerHTML = "";
-    for (const projectID in projects) {
-      this.#projectsContainer.appendChild(
-        new NavButton(projects[projectID], projectID).render()
-      );
+  unmount() {
+    this.children.forEach(child => {
+      child.unmount();
+    });
+    this.children = [];
+    this.#container.remove();
+    this.#componentIsMounted = false;
+  }
+
+  render() {
+    if (this.#componentIsMounted) {
+      this.unmount();
     }
-  }
-
-  #loadDefaultProjects() {
-    const container = document.createElement("div");
-    container.id = "defaultProjectsContainer";
-    const projects = ["All", "Scheduled", "Today", "Flagged"];
-    projects.forEach(projectName => {
-      container.appendChild(new DefaultProject({ name: projectName }).render())
+    this.mount();
+    this.children.forEach(child => {
+      child.render();
     })
-    this.#nav.appendChild(container);
+    this.#container.appendChild(this.#navContainer);
+    this.#navContainer.appendChild(this.#defaultButtonsContainer);
+    this.#projectButtonsContainer.insertAdjacentElement(
+      "afterBegin",
+      this.#containerTitle
+    );
+    this.#navContainer.appendChild(this.#projectButtonsContainer);
+    this.#navContainer.appendChild(newProjectButton);
+    this.rootNode.insertAdjacentElement('afterBegin', this.#container);
   }
 
-  render(projects) {
-    this.#loadUserProjects(projects);
-    this.#projectsContainer.insertAdjacentElement('afterBegin', this.#containerTitle);
-    this.#nav.appendChild(this.#projectsContainer);
-    this.#nav.appendChild(this.#newProjectButton);
-    this.#container.appendChild(this.#nav);
-    return this.#container;
+  /**
+   * This method is called by index.js
+   * This method created a new button for a newly saved project. This method 
+   * creates the button and then renders it. This saves time from having to 
+   * re-render the nav. Which will destroy all the children and then instantiate
+   * all the children again.
+   */
+  addButton(project) {
+    const rootNode = this.#projectButtonsContainer;
+    const button = new UserProjectButton(rootNode, project);
+    this.children.push(button);
+    button.render();
+  }
+
+  #createUserProjectButtons() {
+    const projects = database.getAllProjects();
+    Object.keys(projects).forEach(projectId => {
+      const project = projects[projectId];
+      const rootNode = this.#projectButtonsContainer;
+      const button = new UserProjectButton(rootNode, project);
+      this.children.push(button);
+    });
+  }
+
+  #createDefaultButtons() {
+    const projectNames = ["All", "Scheduled", "Today", "Flagged"];
+    projectNames.forEach(projectName => {
+      const rootNode = this.#defaultButtonsContainer;
+      const button = new DefaultProjectButton(
+        rootNode,
+        projectName
+      );
+      this.children.push(button);
+    });
   }
 }
+
+/**
+ * A module that returns the "Add List" button at the bottom of the nav. 
+ */
+ const newProjectButton = (function () {
+  const container = document.createElement("div");
+  const button = document.createElement("button");
+  container.appendChild(button);
+
+  container.id = "newProjectButtonContainer";
+  button.innerText = "Add List";
+
+  button.addEventListener("click", () => {
+    emitter.emit("addList");
+  });
+
+  return container;
+})();

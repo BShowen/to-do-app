@@ -1,0 +1,12 @@
+.tasksContainer {
+  padding: 5px;
+}
+
+.task {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  border-bottom: var(--border-style);
+  padding: 5px;
+}
