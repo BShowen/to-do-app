@@ -2,6 +2,7 @@ import Project from "../Project/Project";
 import "./style.css";
 import database from "../../database";
 import NewTaskForm from "../Forms/NewTaskForm";
+import { DateTime } from "luxon";
 
 export default class ProjectsContainer extends Component {
 
@@ -129,7 +130,12 @@ export default class ProjectsContainer extends Component {
      * only one project is showing. 
     */
     const formRootNode = this.#container.firstElementChild;
-    const form = new NewTaskForm(formRootNode, projectData);
+    const options = {
+      dueDate: DateTime.fromFormat(new Date()
+        .toLocaleDateString(), 'M/d/yyyy')
+        .toFormat('yyyy-MM-dd'),
+    }
+    const form = new NewTaskForm(formRootNode, projectData, options);
     form.mount();
     this.children.push(form);
   }

@@ -7,7 +7,7 @@ export default class NewTaskForm extends TaskForm {
   #componentIsMounted = false;
   #project;
   #formIsShowing = false;
-  #options = { canRenderOnBodyClick: true };
+  #options = { canRenderOnBodyClick: true, dueDate: '' };
 
   constructor(rootNode, project, options = {}) {
     super(rootNode);
@@ -37,6 +37,15 @@ export default class NewTaskForm extends TaskForm {
 
   show() {
     this.clearForm();
+    if (this.#options.dueDate) {
+      /**
+       * This will set the default date when the user is viewing 'todays' tasks
+       * and they create a new task. It is implied that the user wants to create
+       * a new task that is due today, when they create a new task while viewing 
+       * 'todays' tasks. 
+       */
+      this.dueDate = this.#options.dueDate;
+    }
     super.render();
     super.focus();
     this.#formIsShowing = true;
