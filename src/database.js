@@ -169,7 +169,7 @@ const database = (function () {
     _saveToLocalStorage();
   }
 
-  const getAllTasks = function () {
+  const getTodaysTasks = function () {
     // Create a date string in the same format as the tasks date string. 
     const today = DateTime.fromFormat(
       new Date().toLocaleDateString(),
@@ -198,7 +198,7 @@ const database = (function () {
     getProject,
     getTasks,
     deleteTask,
-    getAllTasks,
+    getTodaysTasks,
   }
 })();
 

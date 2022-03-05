@@ -114,7 +114,7 @@ export default class ProjectsContainer extends Component {
     });
     this.children = [];
     // Then add new children.
-    const allTasks = database.getAllTasks();
+    const allTasks = database.getTodaysTasks();
     const projectData = {
       name: "Today",
       tasks: allTasks
