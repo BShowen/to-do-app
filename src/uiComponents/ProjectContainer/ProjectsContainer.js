@@ -19,12 +19,14 @@ export default class ProjectsContainer extends Component {
 
     this.renderAllProjects = this.renderAllProjects.bind(this);
     this.renderProject = this.renderProject.bind(this);
+    this.renderTodaysProjects = this.renderTodaysProjects.bind(this);
 
     this.#container = document.createElement("div");
     this.#container.id = "projectsContainer";
 
     emitter.on("loadTasks", this.renderProject);
     emitter.on("loadAllProjects", this.renderAllProjects);
+    emitter.on("loadTodayProjects", this.renderTodaysProjects);
 
 
     this.#componentIsMounted = true;
@@ -33,6 +35,7 @@ export default class ProjectsContainer extends Component {
   unmount() {
     emitter.off("loadTasks", this.renderProject);
     emitter.off("loadAllProjects", this.renderAllProjects);
+    emitter.off("loadTodayProjects", this.renderTodaysProjects);
     this.children.forEach(projectElement => {
       projectElement.unmount();
     });
@@ -102,5 +105,31 @@ export default class ProjectsContainer extends Component {
         this.children.push(form);
       }
     });
+  }
+
+  renderTodaysProjects() {
+    // First, remove children.
+    this.children.forEach(projectElement => {
+      projectElement.unmount();
+    });
+    this.children = [];
+    // Then add new children.
+    const allTasks = database.getAllTasks();
+    const projectData = {
+      name: "Today",
+      tasks: allTasks
+    }
+    const project = new Project(this.#container, projectData)
+    this.children.push(project);
+    project.render();
+
+    /**
+     * We can load the form whenever this method is called because we know that
+     * only one project is showing. 
+    */
+    const formRootNode = this.#container.firstElementChild;
+    const form = new NewTaskForm(formRootNode, project);
+    form.mount();
+    this.children.push(form);
   }
 }

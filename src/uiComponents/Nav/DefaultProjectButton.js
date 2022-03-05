@@ -12,7 +12,7 @@ class DefaultProjectButton extends Component {
 
     this.clickHandler = this.clickHandler.bind(this);
   }
-  
+
   mount() {
     this.#container = document.createElement("div");
     this.#button = document.createElement("button");

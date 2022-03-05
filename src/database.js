@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 const database = (function () {
   /********************  Private variables and methods  ***********************/
   const defaultData = {
@@ -158,6 +159,27 @@ const database = (function () {
     _saveToLocalStorage();
   }
 
+  const getAllTasks = function () {
+    // Create a date string in the same format as the tasks date string. 
+    const today = DateTime.fromFormat(
+      new Date().toLocaleDateString(),
+      'M/d/yyyy'
+    ).toFormat('MM/dd/yy');
+
+    let tasks = [];
+    // Iterate through all the projects tasks and return only those tasks 
+    // who's date is the same as todays date. 
+    Object.values(_parsedLocalStorage).forEach(project => {
+      Object.values(project.tasks).forEach(task => {
+        if (task.dueDate == today) {
+          tasks.push(task);
+        }
+      })
+    });
+
+    return tasks;
+  }
+
   return {
     saveTask,
     updateTask,
@@ -166,6 +188,7 @@ const database = (function () {
     getProject,
     getTasks,
     deleteTask,
+    getAllTasks,
   }
 })();
 
