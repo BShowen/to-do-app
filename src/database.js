@@ -190,6 +190,16 @@ const database = (function () {
     return tasks;
   }
 
+  const getDefaultProject = function () {
+    let defaultProject = {};
+    Object.values(_parsedLocalStorage).forEach(project => {
+      if (project.default) {
+        defaultProject = project;
+      }
+    });
+    return defaultProject;
+  }
+
   return {
     saveTask,
     updateTask,
@@ -199,6 +209,7 @@ const database = (function () {
     getTasks,
     deleteTask,
     getTodaysTasks,
+    getDefaultProject,
   }
 })();
 
