@@ -16,14 +16,7 @@ export default class Task extends Component {
   static DATE_FORMAT = 'MM/dd/yy';
 
   constructor(rootNode, task = {}) {
-    super(rootNode)
-    /**
-     * These id's are needed to update the task. When this app is migrated to
-     * mongoDB this logic will have to be changed. 
-     */
-    this.projectId = task.projectId;
-    this.id = task.id;
-
+    super(rootNode);
     this.#task = task
   }
 
@@ -120,13 +113,10 @@ export default class Task extends Component {
     if (this.#subject.innerText.length > 0) {
       // Create the taskData to be sent to the DB
       const taskData = {
-        ...{
-          subject: this.subject,
-          body: this.body,
-          dueDate: this.dueDate,
-        },
-        id: this.#task.id,
-        parentId: this.#task.parentId
+        ...this.#task,
+        subject: this.subject,
+        body: this.body,
+        dueDate: this.dueDate,
       }
       // If database says it updated the task. 
       const { success, task } = database.updateTask(taskData);
