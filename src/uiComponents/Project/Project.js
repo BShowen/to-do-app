@@ -43,14 +43,10 @@ export default class Project extends Component {
 
     this.#container.appendChild(this.#tasksContainer);
 
-    Object.values(this.#project.tasks).forEach((taskData, index) => {
-      const task = {
-        ...taskData,
-        id: index,
-        parentId: this.#project.id
-      }
+    // Add the Project's tasks to the children array. 
+    Object.values(this.#project.tasks).forEach(taskData => {
       const tasksRootNode = this.#tasksContainer;
-      this.children.push(new Task(tasksRootNode, task));
+      this.children.push(new Task(tasksRootNode, taskData));
       this.#taskCounter.increment();
     });
   }
