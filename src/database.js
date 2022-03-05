@@ -54,8 +54,15 @@ const database = (function () {
 
   const _parseLocalStorage = function (data) {
     const appData = JSON.parse(localStorage.getItem('todoApp')) || data
-    Object.keys(appData).forEach(index => {
-      appData[index].id = index
+    // Apply and id to each project.
+    Object.values(appData).forEach((project, projectIndex) => {
+      project.id = projectIndex;
+
+      // Apply an id and parent id to each project's task.
+      Object.values(project.tasks).forEach((task, taskIndex) => {
+        task.id = taskIndex;
+        task.parentId = projectIndex;
+      });
     });
     return appData;
   }
@@ -126,11 +133,14 @@ const database = (function () {
     let taskUpdated = { success: false, task: {} };
     const { parentId, id } = newTask;
     const oldTask = _getTask({ parentId, taskId: id });
+
+    // If the oldTask and newTask are the same, nothing to update.
     if (!_areEqualShallow(newTask, oldTask)) {
       _parsedLocalStorage[parentId].tasks[id] = newTask;
       _saveToLocalStorage();
       taskUpdated = { success: true, task: newTask };
     }
+
     return taskUpdated;
   }
 
