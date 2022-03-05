@@ -117,7 +117,8 @@ export default class ProjectsContainer extends Component {
     const allTasks = database.getTodaysTasks();
     const projectData = {
       name: "Today",
-      tasks: allTasks
+      tasks: allTasks,
+      id: database.getDefaultProject().id
     }
     const project = new Project(this.#container, projectData)
     this.children.push(project);
@@ -128,7 +129,7 @@ export default class ProjectsContainer extends Component {
      * only one project is showing. 
     */
     const formRootNode = this.#container.firstElementChild;
-    const form = new NewTaskForm(formRootNode, project);
+    const form = new NewTaskForm(formRootNode, projectData);
     form.mount();
     this.children.push(form);
   }
