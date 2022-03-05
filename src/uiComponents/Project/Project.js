@@ -23,6 +23,9 @@ export default class Project extends Component {
 
   mount() {
 
+    this.decrement = this.decrement.bind(this);
+    emitter.on("taskDeleted", this.decrement);
+
     this.insertNewTask = this.insertNewTask.bind(this);
     emitter.on("insertNewTask", this.insertNewTask);
 
@@ -58,6 +61,7 @@ export default class Project extends Component {
     });
     this.children = [];
     emitter.off("insertNewTask", this.insertNewTask);
+    emitter.off("taskDeleted", this.decrement);
     this.#container.remove();
   }
 
@@ -81,7 +85,14 @@ export default class Project extends Component {
       const newTask = new Task(this.#tasksContainer, task);
       // Add the task instance to this class's children and render 
       this.children.push(newTask);
+      this.#taskCounter.increment();
       newTask.render();
+    }
+  }
+
+  decrement(id) {
+    if (id == this.#project.id) {
+      this.#taskCounter.decrement();
     }
   }
 }

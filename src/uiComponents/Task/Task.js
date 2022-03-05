@@ -144,8 +144,12 @@ export default class Task extends Component {
       });
 
     } else {
-      console.log("delete form data");
-      emitter.emit("taskDelete");
+      const { parentId, id } = this.#task;
+      database.deleteTask({ parentId, taskId: id });
+      this.unmount();
+      this.#container.remove();
+      // The project class needs to know so that it can decrement its task count
+      emitter.emit("taskDeleted", parentId);
     }
 
   }
@@ -182,6 +186,8 @@ export default class Task extends Component {
     Object.values(inputs).forEach(input => {
       input.addEventListener('input', this.inputHandler);
     });
+
+    inputs.subject.focus();
   }
 
   /**
