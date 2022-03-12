@@ -1,14 +1,18 @@
 import "./style.css";
 import { DateTime } from "luxon";
 import database from "./../../database.js";
+import radioButton from "./RadioButton";
 export default class Task extends Component {
   #container; //div
+  #innerContainer; // Container to hold the #subject, #body, and #dueDate. 
   #subject; //p tag
   #body; //p tag
   #dueDate; //p tag
 
+  #radioButton; //The radio button to toggle a task as completed. 
+
   // Holds reference to the task data that is passed in to the constructor. 
-  #task;
+  task;
 
   // Holds the state of the mount status. 
   #componentIsMounted = false;
@@ -17,7 +21,7 @@ export default class Task extends Component {
 
   constructor(rootNode, task = {}) {
     super(rootNode);
-    this.#task = task
+    this.task = { ...task };
   }
 
   mount() {
@@ -27,19 +31,22 @@ export default class Task extends Component {
 
     this.#container = document.createElement("div");
     this.#container.classList.add("task");
+    this.#innerContainer = document.createElement("div");
     this.#subject = document.createElement("p");
     this.#body = document.createElement("p");
     this.#dueDate = document.createElement("p"); //String MM/DD/YYYY
 
-    this.#subject.innerText = this.#task.subject;
-    this.#body.innerText = this.#task.body;
-    this.#dueDate.innerText = this.#task.dueDate || '';
+    this.#subject.innerText = this.task.subject;
+    this.#body.innerText = this.task.body;
+    this.#dueDate.innerText = this.task.dueDate || '';
 
     this.children = [this.#subject, this.#body, this.#dueDate];
 
     this.inputHandler = this.inputHandler.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.#radioButton = radioButton.bind(this)()//Import RadioButton.js
     this.children.forEach(element => {
+      this.#innerContainer.appendChild(element);
       element.addEventListener('click', this.handleClick);
     });
 
@@ -47,6 +54,7 @@ export default class Task extends Component {
   }
 
   unmount() {
+    this.#radioButton.unmount();
     this.children.forEach(element => {
       element.removeEventListener("click", this.handleClick);
       element.remove();
@@ -58,9 +66,8 @@ export default class Task extends Component {
 
   render() {
     this.mount();
-    this.#container.appendChild(this.#subject);
-    this.#container.appendChild(this.#body);
-    this.#container.appendChild(this.#dueDate);
+    this.#container.appendChild(this.#radioButton.container);
+    this.#container.appendChild(this.#innerContainer);
     this.rootNode.appendChild(this.#container);
   }
 
@@ -113,7 +120,7 @@ export default class Task extends Component {
     if (this.#subject.innerText.length > 0) {
       // Create the taskData to be sent to the DB
       const taskData = {
-        ...this.#task,
+        ...this.task,
         subject: this.subject,
         body: this.body,
         dueDate: this.dueDate,
@@ -121,7 +128,7 @@ export default class Task extends Component {
       // If database says it updated the task. 
       const { success, task } = database.updateTask(taskData);
       if (success) {
-        this.#task = task;
+        this.task = task;
         this.subject = task.subject;
         this.body = task.body;
         // Dont use setter to set the date here. The setter applies formatting, 
@@ -134,7 +141,7 @@ export default class Task extends Component {
       });
 
     } else {
-      const { parentId, id } = this.#task;
+      const { parentId, id } = this.task;
       database.deleteTask({ parentId, taskId: id });
       this.unmount();
       this.#container.remove();

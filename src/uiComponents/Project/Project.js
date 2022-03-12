@@ -46,8 +46,10 @@ export default class Project extends Component {
     // Add the Project's tasks to the children array. 
     Object.values(this.#project.tasks).forEach(taskData => {
       const tasksRootNode = this.#tasksContainer;
-      this.children.push(new Task(tasksRootNode, taskData));
-      this.#taskCounter.increment();
+      if (!taskData.completed) { //dont show completed tasks
+        this.children.push(new Task(tasksRootNode, taskData));
+        this.#taskCounter.increment();
+      }
     });
   }
 
