@@ -65,10 +65,34 @@ export default class Project extends Component {
 
   render() {
     this.mount();
+    this.sortTasksByDateAsc();
     this.children.forEach(taskElement => {
       taskElement.render();
     });
     this.rootNode.appendChild(this.#container);
+  }
+
+  /**
+   * Sort tasks by dates in ascending order. Theres a catch, tasks are not
+   * required to have dates. The tasks without dates should be last in the 
+   * list. For this reason I have to perform an additional check to ensure that
+   * any tasks without dates will be pushed to the back of the list. 
+   */
+  sortTasksByDateAsc() {
+    this.children.sort((a, b) => {
+      const task1Date = a.task.dueDate ? new Date(a.task.dueDate) : false;
+      const task2Date = b.task.dueDate ? new Date(b.task.dueDate) : false;
+
+      if (!task1Date || !task2Date) {
+        if (!task1Date) {
+          return 1;
+        } else {
+          return -1
+        }
+      } else {
+        return task1Date - task2Date;
+      }
+    });
   }
 
   /**

@@ -32,6 +32,7 @@ export default class Task extends Component {
     this.#container = document.createElement("div");
     this.#container.classList.add("task");
     this.#innerContainer = document.createElement("div");
+    this.#innerContainer.classList.add("inputs");
     this.#subject = document.createElement("p");
     this.#body = document.createElement("p");
     this.#dueDate = document.createElement("p"); //String MM/DD/YYYY
@@ -136,7 +137,7 @@ export default class Task extends Component {
         this.#dueDate.innerText = task.dueDate;
       }
       // replace the inputs with the p tags from before. 
-      Array.from(this.#container.children).forEach((element, i) => {
+      Array.from(this.#innerContainer.children).forEach((element, i) => {
         element.replaceWith(this.children[i]);
       });
 
