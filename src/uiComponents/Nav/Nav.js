@@ -2,6 +2,11 @@ import DefaultProjectButton from "./DefaultProjectButton.js";
 import UserProjectButton from "./UserProjectButton.js";
 import database from "./../../database.js";
 import "./style.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
+import 'tippy.js/themes/light.css';
+import tippyMenu from "./tippyMenu.js";
 
 /**
  * A class that renders the apps navigation panel along with its children. The
@@ -109,14 +114,33 @@ export default class Nav extends Component {
   }
 }
 
+// This is the settings gear icon
+const settingsButton = (function () {
+  const container = document.createElement("div");
+
+  const icon = document.createElement("i");
+  icon.id = "settingIcon";
+  icon.classList.add("bi", "bi-gear");
+  tippy(icon, {
+    trigger: 'click',
+    interactive: true,
+    allowHTML: true,
+    theme: "light",
+    content: tippyMenu().container,
+  });
+  container.appendChild(icon);
+
+  return container;
+})();
+
 /**
  * A module that returns the "Add List" button at the bottom of the nav. 
  */
- const newProjectButton = (function () {
+const newProjectButton = (function () {
   const container = document.createElement("div");
   const button = document.createElement("button");
   container.appendChild(button);
-
+  container.appendChild(settingsButton);
   container.id = "newProjectButtonContainer";
   button.innerText = "Add List";
 

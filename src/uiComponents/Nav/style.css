@@ -56,8 +56,27 @@
 #newProjectButtonContainer {
   flex-grow: 1;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
-  padding: 10px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 20px;
+}
+
+#settingIcon{
+  font-size: 1.3rem;
+}
+#settingIcon:hover{
+  color: blue;
+}
+
+.tippyMenu{
+  margin: 0;
+  height: 100px;
+  width: 100px;
+}
+
+.tippyMenu > .title {
+  text-align: center;
+  padding: 3px;
+  border-bottom: 1px solid silver;
 }

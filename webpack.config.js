@@ -21,7 +21,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'To-do',
       template: path.resolve(__dirname, 'src/index.html'),
-    }), 
+    }),
     new webpack.ProvidePlugin({
       emitter: ['/src/eventEmitter.js', 'default'],
       Component: ['/src/uiComponents/Component/Component.js', 'Component'],
@@ -32,6 +32,10 @@ module.exports = {
       {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
       },
     ],
   },
