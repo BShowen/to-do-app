@@ -9,12 +9,12 @@ const database = (function () {
         0: {
           subject: "Wash this dishes",
           body: "Make sure the dish washer is empty first!",
-          dueDate: "02/15/22"
+          dueDate: "04/15/22"
         },
         1: {
           subject: "Do some homework",
           body: "But I dont wanna",
-          dueDate: "03/01/22"
+          dueDate: "04/01/22"
         }
       }
     },
@@ -25,12 +25,12 @@ const database = (function () {
         0: {
           subject: "Start working on The Odin Project",
           body: "Make sure you understand JavaScript before proceeding",
-          dueDate: "03/15/22"
+          dueDate: "04/15/22"
         },
         1: {
           subject: "Get those files on the bosses desk",
           body: "I hate that guy...",
-          dueDate: "02/15/22"
+          dueDate: "03/15/22"
         }
       },
     },
@@ -41,12 +41,12 @@ const database = (function () {
         0: {
           subject: "Clean out the close",
           body: "Get rid of old shirts",
-          dueDate: "03/04/22"
+          dueDate: "03/24/22"
         },
         1: {
           subject: "Clean the bathroom",
           body: "Bleach the tub",
-          dueDate: "04/02/22"
+          dueDate: "03/26/22"
         }
       },
     },
@@ -216,6 +216,43 @@ const database = (function () {
     return verificationObject.default != getProject(projectId);
   }
 
+  // A private method that retrieves all the tasks. 
+  const _getAllTasks = function () {
+    let tasks = []
+    Object.values(_parsedLocalStorage).forEach(project => {
+      tasks = tasks.concat(Object.values(project.tasks));
+    });
+    return tasks;
+  }
+
+  /**
+   * Returns an object with all tasks, grouped by dueDate, sorted ascending
+   * according to due date. 
+   */
+  const getTasksWithDate = function () {
+    const allTasks = _getAllTasks().filter(task => {
+      // We want only the tasks that have a due date and that are NOT completed.
+      return task.dueDate && !task.completed;
+    }).sort(_sortAscending);
+    // Group tasks by due date. 
+    const groupedTasks = {};
+    allTasks.forEach(task => {
+      groupedTasks[task.dueDate] = groupedTasks[task.dueDate] || [];
+      groupedTasks[task.dueDate].push(task);
+    });
+    return groupedTasks;
+  }
+
+  /**
+   * Sort tasks ascending by due date. This method is passed to Array.sort() as 
+   * the callback. 
+   */
+  const _sortAscending = function (task1, task2) {
+    const task1Date = new Date(task1.dueDate);
+    const task2Date = new Date(task2.dueDate);
+    return task1Date - task2Date;
+  }
+
   return {
     saveTask,
     updateTask,
@@ -227,6 +264,7 @@ const database = (function () {
     getTodaysTasks,
     getDefaultProject,
     setDefaultProject,
+    getTasksWithDate,
   }
 })();
 

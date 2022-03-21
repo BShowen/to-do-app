@@ -21,6 +21,7 @@ export default class ProjectsContainer extends Component {
     this.renderAllProjects = this.renderAllProjects.bind(this);
     this.renderProject = this.renderProject.bind(this);
     this.renderTodaysProjects = this.renderTodaysProjects.bind(this);
+    this.renderScheduledProjects = this.renderScheduledProjects.bind(this);
 
     this.#container = document.createElement("div");
     this.#container.id = "projectsContainer";
@@ -28,6 +29,7 @@ export default class ProjectsContainer extends Component {
     emitter.on("loadTasks", this.renderProject);
     emitter.on("loadAllProjects", this.renderAllProjects);
     emitter.on("loadTodayProjects", this.renderTodaysProjects);
+    emitter.on("loadScheduledProjects", this.renderScheduledProjects);
 
 
     this.#componentIsMounted = true;
@@ -141,5 +143,76 @@ export default class ProjectsContainer extends Component {
     form.mount();
     this.children.push(form);
     emitter.reload = this.renderTodaysProjects.bind(this);
+  }
+
+  renderScheduledProjects() {
+    // First, remove children.
+    this.children.forEach(projectElement => {
+      projectElement.unmount();
+    });
+    this.children = [];
+    // Then add new children.
+    const scheduledTasks = database.getTasksWithDate();
+    const projectRootNode = this.#container;
+    Object.keys(scheduledTasks).forEach(date => {
+      const projectTitle = this.#getDateTile(date);
+      const projectData = {
+        name: projectTitle,
+        tasks: scheduledTasks[date],
+        // id: database.getDefaultProject().id
+      }
+      const newProject = new Project(projectRootNode, projectData);
+      this.children.push(newProject);
+      newProject.render();
+      /**
+       * We can show the form only for the default project when this method is
+       * called. 
+       */
+      // if (project.default) {
+      //   const formRootNode = this.#container.lastElementChild;
+      //   const formOptions = { canRenderOnBodyClick: false };
+      //   const form = new NewTaskForm(formRootNode, project, formOptions);
+      //   form.mount();
+      //   this.children.push(form);
+      // }
+    });
+
+    emitter.reload = this.renderScheduledProjects.bind(this);
+  }
+
+  /**
+   * Returns either "Yesterday", "Today", "Tomorrow", or the date that was 
+   * passed in. 
+   * 
+   * This method is used to set the title of the Project that we use when
+   * rendering projects for the Scheduled view. 
+   */
+  #getDateTile(date) {
+    const FORMAT = "MM/dd/yy";
+    const todaysDate = DateTime.now();
+    //Create luxon date object for easy date comparing. 
+    const taskDate = DateTime.fromFormat(date, FORMAT);
+
+    if (todaysDate.toFormat(FORMAT) == taskDate.toFormat(FORMAT)) {
+      // If the dates are the same. 
+      return "Today";
+    } else if (
+      // Make sure the day, month, and year are checked
+      // Title is "Tomorrow" if today - task date = -1
+      (todaysDate.month == taskDate.month) &&
+      (todaysDate.day - taskDate.day == -1) &&
+      (todaysDate.year == taskDate.year)
+    ) {
+      return "Tomorrow";
+    } else if (
+      // Make sure the day, month, and year are checked
+      // Title is "Tomorrow" if today - task date = 1
+      (todaysDate.month == taskDate.month) &&
+      (todaysDate.day - taskDate.day == 1) &&
+      (todaysDate.year == taskDate.year)
+    ) {
+      return "Yesterday";
+    }
+    return date;
   }
 }
