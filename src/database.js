@@ -199,6 +199,22 @@ const database = (function () {
     });
     return defaultProject;
   }
+  /**
+   * projectId = int
+   */
+  const setDefaultProject = function (projectId) {
+
+    const oldDefaultProject = getDefaultProject();
+    oldDefaultProject.default = false;
+
+    const newDefaultProject = getProject(projectId);
+    const verificationObject = { ...newDefaultProject };
+    newDefaultProject.default = true;
+
+    _saveToLocalStorage();
+
+    return verificationObject.default != getProject(projectId);
+  }
 
   return {
     saveTask,
@@ -210,6 +226,7 @@ const database = (function () {
     deleteTask,
     getTodaysTasks,
     getDefaultProject,
+    setDefaultProject,
   }
 })();
 

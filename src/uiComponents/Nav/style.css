@@ -50,7 +50,9 @@
 #projectButtons > div > button {
   padding: 5px 10px 5px 20px;
   width: 100%;
-  text-align: left;
+  display: flex;
+  justify-content: space-between;
+
 }
 
 #newProjectButtonContainer {
@@ -69,6 +71,7 @@
   color: blue;
 }
 
+/* Settings tippy menu */
 .tippyMenu{
   margin: 0;
   height: 100px;
@@ -79,4 +82,13 @@
   text-align: center;
   padding: 3px;
   border-bottom: 1px solid silver;
+}
+
+/* The tippy menu when "i" is clicked */
+.defaultProject {
+  background-color: blue;
+  color: white;
+}
+.defaultProject:hover{
+  cursor: not-allowed;
 }

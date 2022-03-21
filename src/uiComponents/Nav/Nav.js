@@ -6,7 +6,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
-import tippyMenu from "./tippyMenu.js";
+import { settingsMenu } from "./myTippyMenus.js";
 
 /**
  * A class that renders the apps navigation panel along with its children. The
@@ -126,7 +126,7 @@ const settingsButton = (function () {
     interactive: true,
     allowHTML: true,
     theme: "light",
-    content: tippyMenu().container,
+    content: settingsMenu().container,
   });
   container.appendChild(icon);
 

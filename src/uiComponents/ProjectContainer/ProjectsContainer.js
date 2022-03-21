@@ -78,6 +78,7 @@ export default class ProjectsContainer extends Component {
     const form = new NewTaskForm(formRootNode, project);
     form.mount();
     this.children.push(form);
+    emitter.reload = this.renderProject.bind(this, projectID);
   }
 
   renderAllProjects() {
@@ -106,6 +107,7 @@ export default class ProjectsContainer extends Component {
         this.children.push(form);
       }
     });
+    emitter.reload = this.renderAllProjects.bind(this);
   }
 
   renderTodaysProjects() {
@@ -138,5 +140,6 @@ export default class ProjectsContainer extends Component {
     const form = new NewTaskForm(formRootNode, projectData, options);
     form.mount();
     this.children.push(form);
+    emitter.reload = this.renderTodaysProjects.bind(this);
   }
 }

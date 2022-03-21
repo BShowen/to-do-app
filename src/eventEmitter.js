@@ -1,4 +1,4 @@
-const emitter = (function() {
+const emitter = (function () {
   const events = {}
 
   const on = function (eventName, callBack) {
@@ -26,7 +26,14 @@ const emitter = (function() {
     }
   }
 
-  return { on, off, emit, events }
+  /**
+   * This app doesn't have a router. So, in order to reload a page I need to 
+   * store reference to the last method that was called that loaded the page. 
+   * This method will be updated every time a method renders a page. 
+   */
+  const reload = null;
+
+  return { on, off, emit, reload, events }
 })();
 
 export default emitter;
