@@ -1,13 +1,13 @@
 import "./style.css";
 import { DateTime } from "luxon";
-import database from "./../../database.js";
 import radioButton from "./RadioButton";
+import { editTaskForm } from "../Forms/EditTaskForm";
 export default class Task extends Component {
-  #container; //div
-  #innerContainer; // Container to hold the #subject, #body, and #dueDate. 
-  #subject; //p tag
-  #body; //p tag
-  #dueDate; //p tag
+  container; //div
+  innerContainer; // Container to hold the subjectContainer, bodyContainer, and dueDateContainer. 
+  subjectContainer; //p tag
+  bodyContainer; //p tag
+  dueDateContainer; //p tag
 
   #radioButton; //The radio button to toggle a task as completed. 
 
@@ -29,25 +29,26 @@ export default class Task extends Component {
       return;
     }
 
-    this.#container = document.createElement("div");
-    this.#container.classList.add("task");
-    this.#innerContainer = document.createElement("div");
-    this.#innerContainer.classList.add("inputs");
-    this.#subject = document.createElement("p");
-    this.#body = document.createElement("p");
-    this.#dueDate = document.createElement("p"); //String MM/DD/YYYY
+    this.editTaskForm = editTaskForm.bind(this)();
 
-    this.#subject.innerText = this.task.subject;
-    this.#body.innerText = this.task.body;
-    this.#dueDate.innerText = this.task.dueDate || '';
+    this.container = document.createElement("div");
+    this.container.classList.add("task");
+    this.innerContainer = document.createElement("div");
+    this.innerContainer.classList.add("inputs");
+    this.subjectContainer = document.createElement("p");
+    this.bodyContainer = document.createElement("p");
+    this.dueDateContainer = document.createElement("p"); //String MM/DD/YYYY
 
-    this.children = [this.#subject, this.#body, this.#dueDate];
+    this.subjectContainer.innerText = this.task.subject;
+    this.bodyContainer.innerText = this.task.body;
+    this.dueDateContainer.innerText = this.task.dueDate || '';
 
-    this.inputHandler = this.inputHandler.bind(this);
+    this.children = [this.subjectContainer, this.bodyContainer, this.dueDateContainer];
+
     this.handleClick = this.handleClick.bind(this);
     this.#radioButton = radioButton.bind(this)()//Import RadioButton.js
     this.children.forEach(element => {
-      this.#innerContainer.appendChild(element);
+      this.innerContainer.appendChild(element);
       element.addEventListener('click', this.handleClick);
     });
 
@@ -61,157 +62,53 @@ export default class Task extends Component {
       element.remove();
     });
     this.children = [];
-    this.#container.remove();
+    this.container.remove();
     this.#componentIsMounted = false;
   }
 
   render() {
     this.mount();
-    this.#container.appendChild(this.#radioButton.container);
-    this.#container.appendChild(this.#innerContainer);
-    this.rootNode.appendChild(this.#container);
+    this.container.appendChild(this.#radioButton.container);
+    this.container.appendChild(this.innerContainer);
+    this.rootNode.appendChild(this.container);
   }
 
   set subject(newSubject) {
-    this.#subject.innerText = newSubject.trim();
+    this.subjectContainer.innerText = newSubject.trim();
   }
 
   set body(newBody) {
-    this.#body.innerText = newBody;
+    this.bodyContainer.innerText = newBody;
   }
 
   set dueDate(newDate) {
     if (newDate) {
       const dateTime = DateTime.fromFormat(newDate, 'yyyy-MM-dd');
-      this.#dueDate.innerText = dateTime.toFormat('MM/dd/yy');
+      this.dueDateContainer.innerText = dateTime.toFormat('MM/dd/yy');
     }
   }
 
   get subject() {
-    return this.#subject.innerText;
+    return this.subjectContainer.innerText;
   }
 
   get body() {
-    return this.#body.innerText || '';
+    return this.bodyContainer.innerText || '';
   }
 
   get dueDate() {
-    return this.#dueDate.innerText || '';
+    return this.dueDateContainer.innerText || '';
   }
 
-  // The click handler for when a tasks p tag is clicked. 
   handleClick(e) {
-    this.convertToInputs();
-    this.closeForm = this.closeForm.bind(this);
-    // e.stopPropagation();
-    setTimeout(() => {
-      document.addEventListener('click', this.closeForm);
-    }, 0);
-  }
-
-  closeForm(e) {
-    const inputClick = e.target.localName == "input";
-    if (inputClick) {
-      // Ignore clicks on input fields. 
-      return;
-    }
-
-    document.removeEventListener("click", this.closeForm);
-    // If the task is valid.
-    if (this.#subject.innerText.length > 0) {
-      // Create the taskData to be sent to the DB
-      const taskData = {
-        ...this.task,
-        subject: this.subject,
-        body: this.body,
-        dueDate: this.dueDate,
-      }
-      // If database says it updated the task. 
-      const { success, task } = database.updateTask(taskData);
-      if (success) {
-        this.task = task;
-        this.subject = task.subject;
-        this.body = task.body;
-        // Dont use setter to set the date here. The setter applies formatting, 
-        // but this date is already formatted
-        this.#dueDate.innerText = task.dueDate;
-      }
-      // replace the inputs with the p tags from before. 
-      Array.from(this.#innerContainer.children).forEach((element, i) => {
-        element.replaceWith(this.children[i]);
-      });
-
-    } else {
-      const { parentId, id } = this.task;
-      database.deleteTask({ parentId, taskId: id });
-      this.unmount();
-      this.#container.remove();
-      // The project class needs to know so that it can decrement its task count
-      emitter.emit("taskDeleted", parentId);
-    }
-
-  }
-
-  /**
-  * This method converts the tasks p tags into input tags when the user clicks
-  * on a task's p tag. 
-  */
-  convertToInputs() {
-    const inputs = {
-      subject: document.createElement('input'),
-      body: document.createElement('input'),
-      dueDate: document.createElement('input'),
-    }
-
-    inputs.subject.value = this.subject;
-    inputs.subject.id = 'subject';
-    inputs.body.value = this.body
-    inputs.body.id = 'body';
-    inputs.dueDate.setAttribute("type", "date");
-    inputs.dueDate.id = 'dueDate';
-
-    // Date needs to be formatted properly in order to be used as the value 
-    // (placeholder) for the date input
-    const dateTime = DateTime.fromFormat(this.dueDate, Task.DATE_FORMAT);
-    inputs.dueDate.value = dateTime.toFormat('yyyy-MM-dd');
-
-    // Replace the p tags with input tags
-    this.#subject.replaceWith(inputs.subject);
-    this.#body.replaceWith(inputs.body);
-    this.#dueDate.replaceWith(inputs.dueDate);
-
-    // Add listeners to each input
-    Object.values(inputs).forEach(input => {
-      input.addEventListener('input', this.inputHandler);
-    });
-
-    inputs.subject.focus();
-  }
-
-  /**
-   * As the user types into the inputs, we update the #state object within this 
-   * class. 
-   */
-  inputHandler(evt) {
-    const attribute = evt.target.id;
-    switch (attribute) {
-      case 'subject':
-        this.subject = evt.target.value;
-        break;
-      case 'body':
-        this.body = evt.target.value;
-        break;
-      case 'dueDate':
-        this.dueDate = evt.target.value;
-        break;
-    }
+    this.editTaskForm.render();
   }
 
   toJSON() {
     return {
-      subject: this.#subject,
-      body: this.#body || "",
-      dueDate: this.#dueDate || "",
+      subject: this.subjectContainer,
+      body: this.bodyContainer || "",
+      dueDate: this.dueDateContainer || "",
     }
   }
 }
