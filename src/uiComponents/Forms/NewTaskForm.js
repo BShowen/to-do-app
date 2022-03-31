@@ -1,7 +1,9 @@
 import TaskForm from "./modules/TaskForm.js";
 import database from "../../database.js";
 /**
- * root = HTML node which the form will append itself to. 
+ * When a user creates a new task, this is the form that is rendered in the DOM.
+ * When the user EDITS a task a different form is rendered in the DOM. 
+ * rootNode = HTML node which the form will append itself to. 
  */
 export default class NewTaskForm extends TaskForm {
   #componentIsMounted = false;
@@ -41,7 +43,7 @@ export default class NewTaskForm extends TaskForm {
       /**
        * This will set the default date when the user is viewing 'todays' tasks
        * and they create a new task. It is implied that the user wants to create
-       * a new task that is due today, when they create a new task while viewing 
+       * a new task that is due today when they create a new task while viewing 
        * 'todays' tasks. 
        */
       this.dueDate = this.#options.dueDate;
@@ -105,13 +107,13 @@ export default class NewTaskForm extends TaskForm {
   /**
    * This function saves a newly created task in the database. On successful 
    * save, the function emits an event that triggers a callback which reloads
-   * the projects tasks, thus showing the newly created tasks in the DOM. 
+   * the projects tasks thus showing the newly created tasks in the DOM. 
    */
   saveData() {
     // Get the data from the form. 
     const task = this.getData();
-    // Set the parentId of the task. This is used to locate 
-    // the project that this task belongs to
+    // Set the parentId of the task. This is used to locate the project that 
+    // this task belongs to
     task.parentId = this.#project.id
 
     if (this.formIsValid) {
@@ -119,7 +121,7 @@ export default class NewTaskForm extends TaskForm {
       const newTask = database.saveTask(task);
       if (newTask) {
         // Trigger the callback that re-renders the project page, thus rendering
-        // this new task in the DOM. 
+        // the new task in the DOM. 
         emitter.emit("insertNewTask", newTask);
       } else {
         // Alert the user that something went wrong. 

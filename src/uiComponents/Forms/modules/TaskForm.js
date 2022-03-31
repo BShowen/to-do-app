@@ -1,5 +1,10 @@
 import { DateTime } from "luxon";
 import "./style.css";
+/**
+ * This is the class that all of the TASK forms in this application inherit 
+ * from. I do this because there is certain functionality that I dont want to 
+ * repeat for each form.
+ */
 export default class TaskForm extends Component {
   container;
   #subject;
@@ -16,15 +21,22 @@ export default class TaskForm extends Component {
     if (this.#componentIsMounted) {
       return;
     }
+    // The container for the form. 
     this.container = document.createElement("div");
     this.container.id = "taskForm";
 
+    // The subject input for the task form. 
     this.#subject = document.createElement("input");
+
+    // Ths input handler dynamically checks and changes the validity of this
+    // form as the user types into the "subject" form input.
     this.inputHandler = this.inputHandler.bind(this);
     this.#subject.addEventListener('input', this.inputHandler);
 
+    // The body form field. 
     this.#body = document.createElement("input");
 
+    // The dueDate form field. 
     this.#dueDate = document.createElement("input");
     this.#dueDate.setAttribute("type", "date");
 
@@ -62,6 +74,10 @@ export default class TaskForm extends Component {
     this.formIsValid = !!evt.target.value.trim().length;
   }
 
+  /**
+   * Returns an object with any form fields that have been filled out. Blank 
+   * form fields will be empty strings.
+   */
   getData() {
     const task = {};
     task.subject = this.#subject.value.trim() || '';
