@@ -1,0 +1,63 @@
+/**
+ import { flagTask } from "../FlagTaskComponent/flagTask.js";
+ * A module to hold the code for flagging a task. 
+ * The context, or in other words the 'this' keyword, is bound to the object
+ * that calls this module.
+ * 
+ * rootNode = The node that this module will render its contents to. 
+ */
+const flagTask = function (rootNode) {
+  let _isFlagged = false;
+  const _componentContainer = document.createElement("div");
+  const _icon = document.createElement("i");
+
+  const _clickHandler = function (e) {
+    const classList = Array.from(_icon.classList)
+    if (classList.includes("bi-flag")) {
+      _icon.classList.remove("bi-flag");
+      _icon.classList.add("bi-flag-fill");
+      _isFlagged = true;
+    } else {
+      _icon.classList.remove("bi-flag-fill");
+      _icon.classList.add("bi-flag");
+      _isFlagged = false;
+    }
+  }.bind(this);
+
+  const render = function () {
+    rootNode.appendChild(_componentContainer);
+  };
+
+  /**
+   * When we remove this component from the DOM we also need to reset the CSS
+   * class list. Otherwise a bug can be introduced where the "Flag" icon is
+   * filled in on a subsequent task creation, when it shouldn't be filled in. 
+   */
+  const destroy = function () {
+    _icon.classList.remove("bi-flag-fill");
+    _icon.classList.add("bi-flag");
+    _isFlagged = false;
+    _componentContainer.remove();
+  };
+
+  const isFlagged = function () {
+    return _isFlagged;
+  };
+
+  // Construct this object. 
+  (function () {
+    _componentContainer.appendChild(_icon);
+
+    _icon.addEventListener("click", _clickHandler);
+    _icon.id = "flagInput";
+    if (_isFlagged) {
+      _icon.classList.add("bi", "bi-flag-fill");
+    } else {
+      _icon.classList.add("bi", "bi-flag");
+    }
+  })();
+
+  return { render, destroy, isFlagged };
+};
+
+export { flagTask }

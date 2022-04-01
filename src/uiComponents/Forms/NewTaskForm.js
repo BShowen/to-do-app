@@ -57,10 +57,11 @@ export default class NewTaskForm extends TaskForm {
     const buttonClick = evt.target.id == "newTaskButton";
     const inputClick = evt.target.localName == "input";
     const projectContainerClick = evt.target.id == "projectsContainer";
+    const flagClick = evt.target.id == "flagInput";
     const options = { buttonClick, inputClick, projectContainerClick };
-    if (buttonClick || projectContainerClick || inputClick) {
+    if (buttonClick || projectContainerClick || inputClick || flagClick) {
       // The user has clicked on one of the three areas defined in the 
-      // conditional. Now we need to determine which area was clicked and 
+      // conditional. Now we need to determine which area was clicked and
       // respond appropriately. 
       this.#determineClickAction(options);
     } else if (this.#formIsShowing) {

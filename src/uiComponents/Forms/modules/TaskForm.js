@@ -1,5 +1,6 @@
 import { DateTime } from "luxon";
 import "./style.css";
+import { flagTask } from "../../FlagTaskComponent/flagTask.js";
 /**
  * This is the class that all of the TASK forms in this application inherit 
  * from. I do this because there is certain functionality that I dont want to 
@@ -40,6 +41,12 @@ export default class TaskForm extends Component {
     this.#dueDate = document.createElement("input");
     this.#dueDate.setAttribute("type", "date");
 
+    /**
+     * This is the flag that allows you to flag a task. Bind "this" to the 
+     * component to extend the functionality of this (TaskForm) class. 
+     */
+    this.flagComponent = flagTask.bind(this, this.container)();
+
 
     this.container.appendChild(this.#subject);
     this.container.appendChild(this.#body);
@@ -57,6 +64,7 @@ export default class TaskForm extends Component {
 
   render() {
     this.rootNode.appendChild(this.container);
+    this.flagComponent.render();
   }
 
   focus() {
@@ -86,11 +94,13 @@ export default class TaskForm extends Component {
       const dateTime = DateTime.fromFormat(this.#dueDate.value.trim(), 'yyyy-MM-dd');
       task.dueDate = dateTime.toFormat('MM/dd/yy');
     }
+    task.isFlagged = this.flagComponent.isFlagged();
     return task;
   }
 
   removeForm() {
     this.container.remove();
+    this.flagComponent.destroy();
   }
 
   set subject(newValue) {
