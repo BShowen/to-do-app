@@ -26,7 +26,7 @@ const flagTask = function (rootNode) {
 
   const render = function () {
     rootNode.appendChild(_componentContainer);
-  };
+  }.bind(this);
 
   /**
    * When we remove this component from the DOM we also need to reset the CSS
@@ -37,12 +37,36 @@ const flagTask = function (rootNode) {
     _icon.classList.remove("bi-flag-fill");
     _icon.classList.add("bi-flag");
     _isFlagged = false;
+    _icon.removeEventListener("click", _clickHandler);
     _componentContainer.remove();
-  };
+  }.bind(this);
 
   const isFlagged = function () {
     return _isFlagged;
-  };
+  }.bind(this);
+
+  /**
+   * Pass in a Boolean to change the status of the flag.
+   * Returns the boolean. 
+   */
+  const setFlag = function (bool) {
+    if (typeof bool == 'boolean') {
+      _isFlagged = bool;
+    }
+
+    if (_isFlagged) {
+      _icon.classList.remove("bi-flag");
+      _icon.classList.add("bi-flag-fill");
+    } else {
+      _icon.classList.remove("bi-flag-fill");
+      _icon.classList.add("bi-flag");
+    }
+    return _isFlagged;
+  }.bind(this);
+
+  const disable = function () {
+    _icon.removeEventListener("click", _clickHandler);
+  }.bind(this);
 
   // Construct this object. 
   (function () {
@@ -57,7 +81,7 @@ const flagTask = function (rootNode) {
     }
   })();
 
-  return { render, destroy, isFlagged };
+  return { render, destroy, isFlagged, setFlag, disable };
 };
 
 export { flagTask }

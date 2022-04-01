@@ -2,6 +2,7 @@ import "./style.css";
 import { DateTime } from "luxon";
 import radioButton from "./RadioButton";
 import { editTaskForm } from "../Forms/EditTaskForm";
+import { flagTask } from "../FlagTaskComponent/flagTask";
 export default class Task extends Component {
   container; //div
   innerContainer; // Container to hold the subjectContainer, bodyContainer, and dueDateContainer. 
@@ -19,6 +20,8 @@ export default class Task extends Component {
 
   static DATE_FORMAT = 'MM/dd/yy';
 
+  // taskFlag;
+
   constructor(rootNode, task = {}) {
     super(rootNode);
     this.task = { ...task };
@@ -29,8 +32,6 @@ export default class Task extends Component {
       return;
     }
 
-    this.editTaskForm = editTaskForm.bind(this)();
-
     this.container = document.createElement("div");
     this.container.classList.add("task");
     this.innerContainer = document.createElement("div");
@@ -38,6 +39,8 @@ export default class Task extends Component {
     this.subjectContainer = document.createElement("p");
     this.bodyContainer = document.createElement("p");
     this.dueDateContainer = document.createElement("p"); //String MM/DD/YYYY
+
+    this.editTaskForm = editTaskForm.bind(this)();
 
     this.subjectContainer.innerText = this.task.subject;
     this.bodyContainer.innerText = this.task.body;
@@ -71,6 +74,17 @@ export default class Task extends Component {
     this.container.appendChild(this.#radioButton.container);
     this.container.appendChild(this.innerContainer);
     this.rootNode.appendChild(this.container);
+    this.createFlag();
+  }
+
+  // Create the flag component ONLY if the task is flagged. 
+  createFlag() {
+    if (this.task.isFlagged) {
+      this.taskFlag = flagTask.bind(this, this.container)();
+      this.taskFlag.setFlag(this.task.isFlagged);
+      this.taskFlag.disable();
+      this.taskFlag.render();
+    }
   }
 
   set subject(newSubject) {
@@ -101,6 +115,10 @@ export default class Task extends Component {
   }
 
   handleClick(e) {
+    if (this.task.isFlagged) {
+      this.taskFlag.destroy();
+    }
+
     this.editTaskForm.render();
   }
 

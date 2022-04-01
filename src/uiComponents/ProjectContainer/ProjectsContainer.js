@@ -22,6 +22,7 @@ export default class ProjectsContainer extends Component {
     this.renderProject = this.renderProject.bind(this);
     this.renderTodaysProjects = this.renderTodaysProjects.bind(this);
     this.renderScheduledProjects = this.renderScheduledProjects.bind(this);
+    this.renderFlaggedProjects = this.renderFlaggedProjects.bind(this);
 
     this.#container = document.createElement("div");
     this.#container.id = "projectsContainer";
@@ -30,6 +31,7 @@ export default class ProjectsContainer extends Component {
     emitter.on("loadAllProjects", this.renderAllProjects);
     emitter.on("loadTodayProjects", this.renderTodaysProjects);
     emitter.on("loadScheduledProjects", this.renderScheduledProjects);
+    emitter.on("loadFlaggedProjects", this.renderFlaggedProjects);
 
 
     this.#componentIsMounted = true;
@@ -39,6 +41,8 @@ export default class ProjectsContainer extends Component {
     emitter.off("loadTasks", this.renderProject);
     emitter.off("loadAllProjects", this.renderAllProjects);
     emitter.off("loadTodayProjects", this.renderTodaysProjects);
+    emitter.off("loadScheduledProjects", this.renderScheduledProjects);
+    emitter.off("loadFlaggedProjects", this.renderFlaggedProjects);
     this.children.forEach(projectElement => {
       projectElement.unmount();
     });
@@ -214,5 +218,26 @@ export default class ProjectsContainer extends Component {
       return "Yesterday";
     }
     return date;
+  }
+
+  renderFlaggedProjects() {
+    // First, remove children.
+    this.children.forEach(projectElement => {
+      projectElement.unmount();
+    });
+    this.children = [];
+
+    // Then add new children.
+    const tasks = database.getFlaggedTasks();
+    const projectRootNode = this.#container;
+    const project = {
+      name: "Flagged",
+      tasks: tasks,
+    }
+    const newProject = new Project(projectRootNode, project);
+    this.children.push(newProject);
+    newProject.render();
+
+    emitter.reload = this.renderScheduledProjects.bind(this);
   }
 }

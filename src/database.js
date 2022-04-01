@@ -244,6 +244,16 @@ const database = (function () {
   }
 
   /**
+   * Retrieve only the tasks that are flagged, sorted ascending by date. 
+   * Returns an array of task objects. 
+   */
+  const getFlaggedTasks = function () {
+    return _getAllTasks().filter(task => {
+      return task.isFlagged;
+    }).sort(_sortAscending);
+  }
+
+  /**
    * Sort tasks ascending by due date. This method is passed to Array.sort() as 
    * the callback. 
    */
@@ -265,6 +275,7 @@ const database = (function () {
     getDefaultProject,
     setDefaultProject,
     getTasksWithDate,
+    getFlaggedTasks,
   }
 })();
 

@@ -1,15 +1,26 @@
 import { DateTime } from "luxon";
 import Task from "./../Task/Task.js";
 import database from "../../database";
+import { flagTask } from "../FlagTaskComponent/flagTask.js";
 /**
  * This is the form that appears when a user is editing a task. The context 
  * of 'this' is bound to the task object. 
  */
 
 const editTaskForm = function () {
+  /**
+   * This variable/attribute is initiated here so it is global within this 
+   * module. It is assigned a value in this component's render function. This
+   * needs to happen this way because 'flag' is cleared when this component
+   * unmounts and 'flag' needs to be re-assigned a value when this component
+   * gets rendered again. 
+   */
+  let flag;
+
   const _closeForm = function (e) {
     const inputClick = e.target.localName == "input";
-    if (inputClick) {
+    const flagClick = e.target.id == "flagInput";
+    if (inputClick || flagClick) {
       // Ignore clicks on input fields. 
       return;
     }
@@ -25,27 +36,34 @@ const editTaskForm = function () {
   }.bind(this);
 
   const _saveTask = function () {
-    // Create the taskData to be sent to the DB
+    // Create the updated task that is to be updated the DB
     const taskData = {
       ...this.task,
       subject: this.subject,
       body: this.body,
       dueDate: this.dueDate,
+      isFlagged: flag.isFlagged(),
     }
     // If database says it updated the task. 
     const { success, task } = database.updateTask(taskData);
     if (success) {
-      this.task = task;
-      this.subject = task.subject;
-      this.body = task.body;
-      // Dont use setter to set the date here. The setter applies formatting, 
-      // but this date is already formatted
-      // this.#dueDate.innerText = task.dueDate;
+      this.task = { ...task };
     }
+
+    /**
+      * Important: flag.destroy() must be called before Array.from... This is 
+      * because when the flag component renders, it becomes a child in the div
+      * container that holds all other inputs (subject, body, due date). The 
+      * flag component needs to remove itself from this container div BEFORE
+      * Array.from... gets called. 
+      */
+    flag.destroy();
+
     // replace the inputs with the p tags from before. 
     Array.from(this.innerContainer.children).forEach((element, i) => {
       element.replaceWith(this.children[i]);
     });
+    this.createFlag();
   }.bind(this);
 
   const _deleteTask = function () {
@@ -90,6 +108,9 @@ const editTaskForm = function () {
       input.addEventListener('input', _inputHandler);
     });
 
+    flag.setFlag(this.task.isFlagged);
+    flag.render();
+
     inputs.subject.focus();
   }.bind(this);
 
@@ -113,6 +134,7 @@ const editTaskForm = function () {
   }.bind(this);
 
   const render = function () {
+    flag = flagTask.bind(this, this.container)();
     _convertToInputs();
     setTimeout(() => {
       document.addEventListener('click', _closeForm);

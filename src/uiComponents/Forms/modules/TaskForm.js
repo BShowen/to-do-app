@@ -13,6 +13,7 @@ export default class TaskForm extends Component {
   #dueDate;
   #componentIsMounted = false;
   formIsValid = false;
+  flagComponent;
 
   constructor(rootNode) {
     super(rootNode);
@@ -59,6 +60,7 @@ export default class TaskForm extends Component {
     this.#subject.removeEventListener("input", this.inputHandler);
     this.clearForm();
     this.container.remove();
+    this.flagComponent.destroy();
     this.#componentIsMounted = false;
   }
 
@@ -76,6 +78,7 @@ export default class TaskForm extends Component {
     this.body = '';
     this.dueDate = '';
     this.formIsValid = false;
+    this.flagComponent.setFlag(false);
   }
 
   inputHandler(evt) {
@@ -100,7 +103,6 @@ export default class TaskForm extends Component {
 
   removeForm() {
     this.container.remove();
-    this.flagComponent.destroy();
   }
 
   set subject(newValue) {
