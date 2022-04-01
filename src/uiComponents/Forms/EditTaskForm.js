@@ -55,7 +55,7 @@ const editTaskForm = function () {
     this.container.remove();
     // The project class needs to know so that it can decrement its task count
     emitter.emit("taskDeleted", parentId);
-  }
+  }.bind(this);
 
   /**
   * This method converts the tasks p tags into input tags when the user clicks
