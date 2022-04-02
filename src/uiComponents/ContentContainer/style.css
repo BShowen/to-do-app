@@ -4,6 +4,11 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  
+  /* Allow the tasks to scroll while preventing nav from scrolling */
+  overflow: scroll;
+  min-height: 100vh;
+  height: 100vh;
 
   /* This is positioned ancestor in which #newTaskFormWindow's 
   position is relative to */
