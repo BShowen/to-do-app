@@ -86,7 +86,11 @@ export default class Nav extends Component {
    */
   addButton(project) {
     const rootNode = this.#projectButtonsContainer;
-    const button = new UserProjectButton(rootNode, project);
+    const button = new UserProjectButton(
+      rootNode,
+      project,
+      { buttonIsActive: true }
+    );
     this.children.push(button);
     button.render();
   }
@@ -138,13 +142,24 @@ const settingsButton = (function () {
  */
 const newProjectButton = (function () {
   const container = document.createElement("div");
-  const button = document.createElement("button");
-  container.appendChild(button);
-  container.appendChild(settingsButton);
   container.id = "newProjectButtonContainer";
-  button.innerText = "Add List";
 
-  button.addEventListener("click", () => {
+  const iconContainer = document.createElement("div");
+  iconContainer.classList.add("addListButton", "defaultCursor");
+
+  const icon = document.createElement("i");
+  icon.classList.add("bi", "bi-plus-circle");
+
+  const text = document.createElement("p");
+  text.innerText = "Add List";
+
+  container.appendChild(iconContainer);
+  container.appendChild(settingsButton);
+
+  iconContainer.appendChild(icon);
+  iconContainer.appendChild(text);
+
+  iconContainer.addEventListener("click", () => {
     emitter.emit("addList");
   });
 

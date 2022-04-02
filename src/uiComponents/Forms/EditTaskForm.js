@@ -19,7 +19,7 @@ const editTaskForm = function () {
 
   const _closeForm = function (e) {
     const inputClick = e.target.localName == "input";
-    const flagClick = e.target.id == "flagInput";
+    const flagClick = Array.from(e.target.classList).includes('flagInput');
     if (inputClick || flagClick) {
       // Ignore clicks on input fields. 
       return;
@@ -61,7 +61,17 @@ const editTaskForm = function () {
 
     // replace the inputs with the p tags from before. 
     Array.from(this.innerContainer.children).forEach((element, i) => {
-      element.replaceWith(this.children[i]);
+      if (i <= 1) {
+        // Replace the first two children. 
+        element.replaceWith(this.children[i]);
+      } else {
+        /** 
+         * The last child is from innerContainer.child is a container. The 
+         * actual child that needs to be replaced is the first (only) child in
+         * this container. 
+         */
+        element.children[0].replaceWith(this.children[i]);
+      }
     });
     this.createFlag();
   }.bind(this);
@@ -134,7 +144,7 @@ const editTaskForm = function () {
   }.bind(this);
 
   const render = function () {
-    flag = flagTask.bind(this, this.container)();
+    flag = flagTask.bind(this, this.inputsRow)();
     _convertToInputs();
     setTimeout(() => {
       document.addEventListener('click', _closeForm);

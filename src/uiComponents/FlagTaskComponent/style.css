@@ -1,0 +1,23 @@
+.radioButton>input {
+  padding: 0;
+  margin: 0;
+}
+
+.bi-flag-fill,
+.bi-flag {
+  color: #FF9500;
+}
+
+.flagContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 26px;
+  min-width: 26px;
+  font-size: 0.8rem;
+  background-color: #F5F5F5;
+  padding: 5px;
+  border-radius: 5px;
+  align-self: flex-end;
+  margin: 0 5px;
+}

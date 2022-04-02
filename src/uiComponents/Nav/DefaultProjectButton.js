@@ -3,7 +3,7 @@
  */
 class DefaultProjectButton extends Component {
   #container;
-  #button;
+  #title;
   #projectName;
 
   constructor(rootNode, name) {
@@ -11,28 +11,53 @@ class DefaultProjectButton extends Component {
     this.#projectName = name;
 
     this.clickHandler = this.clickHandler.bind(this);
+    this.resetActiveStatus = this.resetActiveStatus.bind(this);
   }
 
   mount() {
     this.#container = document.createElement("div");
-    this.#button = document.createElement("button");
-    this.#button.innerText = this.#projectName;
-    this.#button.addEventListener('click', this.clickHandler);
+    this.#container.classList.add("defaultCursor");
+    this.#title = document.createElement("p");
+    this.#title.innerText = this.#projectName;
+    this.#container.addEventListener('click', this.clickHandler);
+
+
+    emitter.on("resetProjectButtonActiveStatus", this.resetActiveStatus);
   }
 
   unmount() {
-    this.#button.removeEventListener('click', this.clickHandler);
+    this.#container.removeEventListener('click', this.clickHandler);
+    emitter.off("resetProjectButtonActiveStatus", this.resetActiveStatus);
     this.#container.remove();
   }
 
   render() {
     this.mount();
-    this.#container.appendChild(this.#button);
+    this.#container.appendChild(this.#title);
     this.rootNode.appendChild(this.#container);
   }
 
   clickHandler() {
+    // Reset the project button active status. 
+    emitter.emit("resetProjectButtonActiveStatus");
+    this.addActiveClassToButton();
     emitter.emit(`load${this.#projectName}Projects`);
+  }
+
+  /**
+   * Adds the 'active' class to the project container. 
+   */
+  addActiveClassToButton() {
+    this.#container.classList.add(`${this.#projectName}-active`);
+  }
+
+  /**
+   * This will reset the project container. This is needed so that when a user 
+   * clicks another project container, this one will reset back to its original 
+   * styling. 
+   */
+  resetActiveStatus() {
+    this.#container.classList.remove(`${this.#projectName}-active`);
   }
 }
 

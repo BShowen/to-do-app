@@ -9,3 +9,32 @@
   align-items: flex-start;
   background-color: #FFF;
 }
+
+/* Style all form's inputs to remove default styling */
+input:not([type=radio]),
+input:focus {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  outline: none;
+  border: none;
+  font-size: 0.8rem;
+  font-family: var(--default-app-font);
+  padding: 1px;
+  margin: 0;
+  width: 100%;
+}
+
+/* Style the date input */
+input[type=date] {
+  min-height: 26px;
+  margin: 0 5px 0 0;
+  background-color: #F5F5F5;
+  border-radius: 5px;
+  max-width: 145px;
+}
+
+/* Style the placeholder text */
+::placeholder {
+  color: #C0C0C0;
+}

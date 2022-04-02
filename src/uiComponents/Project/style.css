@@ -1,5 +1,5 @@
 :root {
-  --border-style: 1px solid grey;
+  --border-style: 1px solid #E6E6E6;
 }
 
 .project {
@@ -7,7 +7,7 @@
 }
 
 .projectHeader{
-  border-bottom: var(--border-style);
+  /* border-bottom: var(--border-style); */
   display: flex;
   flex-direction: row;
   justify-content: space-between;

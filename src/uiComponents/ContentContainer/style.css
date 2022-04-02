@@ -1,5 +1,6 @@
 #content {
-  width: 100%;
+  /* width: 100%; */
+  flex-grow: 1;
   padding: 5px;
   display: flex;
   flex-direction: column;
@@ -24,4 +25,18 @@
 }
 #headerContainer > button {
   z-index: 3;
+}
+
+#newTaskButton {
+  font-size: 1.6rem;
+  color: #6D6D6D;
+  border-radius: 0.3rem;
+  
+  /* transition-property: background-color; */
+  /* transition-duration: 2s; */
+  transition: background-color 500ms;
+}
+
+#newTaskButton:hover {
+  background-color: #F2F2F2;
 }

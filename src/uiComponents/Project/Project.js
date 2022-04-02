@@ -1,6 +1,5 @@
 import Task from "../Task/Task.js";
 import "./style.css";
-import database from "../../database.js";
 
 /**
  * 

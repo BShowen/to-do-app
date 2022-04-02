@@ -36,6 +36,8 @@ export default class Task extends Component {
     this.container.classList.add("task");
     this.innerContainer = document.createElement("div");
     this.innerContainer.classList.add("inputs");
+    this.inputsRow = document.createElement("div");
+    this.inputsRow.classList.add("inputsRow");
     this.subjectContainer = document.createElement("p");
     this.bodyContainer = document.createElement("p");
     this.dueDateContainer = document.createElement("p"); //String MM/DD/YYYY
@@ -50,8 +52,18 @@ export default class Task extends Component {
 
     this.handleClick = this.handleClick.bind(this);
     this.#radioButton = radioButton.bind(this)()//Import RadioButton.js
-    this.children.forEach(element => {
-      this.innerContainer.appendChild(element);
+    this.children.forEach((element, index) => {
+      if (index <= 1) {
+        // Insert the first two children into the innerContainer. 
+        this.innerContainer.appendChild(element);
+      } else {
+        /**
+         * The last child needs to be inserted into a container, inputsRow.
+         * inputsRow will then be appended as the last and final child of 
+         * innerContainer.
+         */
+        this.inputsRow.appendChild(element);
+      }
       element.addEventListener('click', this.handleClick);
     });
 
@@ -73,6 +85,7 @@ export default class Task extends Component {
     this.mount();
     this.container.appendChild(this.#radioButton.container);
     this.container.appendChild(this.innerContainer);
+    this.innerContainer.appendChild(this.inputsRow);
     this.rootNode.appendChild(this.container);
     this.createFlag();
   }

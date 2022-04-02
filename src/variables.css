@@ -1,0 +1,30 @@
+*{
+  box-sizing: border-box;
+}
+
+/* Font for nav > user project buttons */
+@font-face {
+  font-family: 'Sebino Regular';
+  src:  url('./fonts/Sebino\ Regular/Sebino.woff') format("woff"),
+        url('./fonts/Sebino\ Regular/Sebino.woff2') format("woff2"),
+        url('./fonts/Sebino\ Regular/Sebino.svg') format('svg');
+}
+
+/* Font for project titles */
+@font-face {
+  font-family: 'Nud Motoya';
+  src:  url('./fonts/NudMotoya/NudMotoya.woff') format("woff"),
+        url('./fonts/NudMotoya/NudMotoya.woff') format("woff2"),
+        url('./fonts/NudMotoya/NudMotoya.svg') format('svg');
+  /* font-weight: 600; */
+  /* font-style: normal; */
+}
+
+:root{
+  --nav-default-button-background-color: #D7D7D7;
+  --nav-button-font: 'Sebino Regular';
+  --default-app-font: var(--nav-button-font);
+  --nav-button-color: #454545;
+  --project-title-font: 'Nud Motoya';
+}
+

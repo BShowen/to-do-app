@@ -54,10 +54,11 @@ export default class NewTaskForm extends TaskForm {
   }
 
   clickHandler(evt) {
-    const buttonClick = evt.target.id == "newTaskButton";
+    let buttonClick = evt.target.parentNode ? evt.target.parentNode.id : null;
+    buttonClick = buttonClick == "newTaskButton";
     const inputClick = evt.target.localName == "input";
     const projectContainerClick = evt.target.id == "projectsContainer";
-    const flagClick = evt.target.id == "flagInput";
+    const flagClick = Array.from(evt.target.classList).includes("flagInput");
     const options = { buttonClick, inputClick, projectContainerClick };
     if (buttonClick || projectContainerClick || inputClick || flagClick) {
       // The user has clicked on one of the three areas defined in the 

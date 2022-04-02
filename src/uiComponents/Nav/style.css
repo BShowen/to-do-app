@@ -1,12 +1,13 @@
 :root{
-  --main-nav-bg: #E6E6E6;
-  --default-project-bg: #CFCFCF;
+  --main-nav-bg: #F0F0F0;
 }
 
 #navContainer{
-  width: 280px;
+  width: 281px;
   min-height: 100vh;
   height: 100vh;
+  padding-top: 30px;
+  background-color: var(--main-nav-bg);
 }
 
 #navContainer nav{
@@ -14,45 +15,109 @@
   flex-direction: column;
   justify-content: flex-start;
   min-height: 100%;
-  background-color: var(--main-nav-bg);
 }
 
 #defaultProjectsContainer{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 15px;
-  padding: 15px;
+  gap: 8px;
+  justify-content: center;
+  padding: 5px 5px;
+}
+
+/* When the "All" button is active */
+.All-active {
+  background-color: #5B626A !important;
+  color: white !important;
+}
+
+/* When the "Scheduled" button is active */
+.Scheduled-active {
+  background-color: #FF3B30 !important;
+  color: white !important;
+}
+
+/* When the "Flagged" button is active */
+.Flagged-active {
+  background-color: #FF9500 !important;
+  color: white !important;
+}
+
+/* When the "Today" button is active */
+.Today-active {
+  background-color: #057AFF !important;
+  color: white !important;
 }
 
 /* Default project buttons */
 #defaultProjectsContainer > div {
-  background-color: var(--default-project-bg);
-  flex-basis: 70px;
+  background-color: var(--nav-default-button-background-color);
+  margin: 0;
+  flex-basis: 100px;
   padding: 10px;
-  height: 60px;
+  height: 62px;
   flex-grow: 1;
+  border-radius: 0.6rem;
+  font-family: var(--project-title-font);
+  font-size: 0.8rem;
+  color: #585858;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
 }
 
 #projectButtons{
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
   padding: 10px;
 }
 
+/* This is the "My Lists" title in the Nav */
+#projectButtons > p {
+  font-family: Arial;
+  font-weight: bold;
+  padding: 3px;
+  font-size: 0.8rem;
+  color: #B0B0B0;
+}
 /* Button containers */
 #projectButtons > div {
   width: 100%;
+  height: 35px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 7px;
+  overflow: hidden;
 }
 
 #projectButtons > div > button {
-  padding: 5px 10px 5px 20px;
-  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 5px 10px 5px 20px;
+  border: none;
+  font-family: var(--nav-button-font);
+  color: var(--nav-button-color);
+  font-size: .9rem;
+}
 
+/* When the user project button is active */
+.active{
+  background-color: #44A1FF;
+  color: white !important;
+}
+
+/* When the user project button has been selected */
+.selected{
+  background-color: #D7D7D7;
 }
 
 #newProjectButtonContainer {
@@ -61,14 +126,15 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 20px;
+  padding: 10px;
 }
 
 #settingIcon{
-  font-size: 1.3rem;
+  font-size: 0.8rem;
+  color: #717171;
 }
 #settingIcon:hover{
-  color: blue;
+  color: #44A1FF;
 }
 
 /* Settings tippy menu */
@@ -85,10 +151,31 @@
 }
 
 /* The tippy menu when "i" is clicked */
-.defaultProject {
-  background-color: blue;
+.projectMenuButton {
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  background-color: #057AFF;
   color: white;
+}
+.defaultProject {
+  background-color: #FF3B30;
 }
 .defaultProject:hover{
   cursor: not-allowed;
+}
+
+.addListButton {
+  color: #717171;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-family: var(--nav-button-font);
+}
+
+.defaultCursor {
+  cursor: default;
 }

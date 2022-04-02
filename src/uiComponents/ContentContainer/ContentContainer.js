@@ -43,10 +43,12 @@ export default class ContentContainer extends Component {
 }
 
 const headerButton = (function () {
-  const button = document.createElement("button");
-  button.id = "newTaskButton";
-  button.innerText = "+";
-  return button;
+  const container = document.createElement("div");
+  container.id = "newTaskButton";
+  const icon = document.createElement("i");
+  icon.classList.add("bi", "bi-plus");
+  container.appendChild(icon);
+  return container;
 })();
 
 const header = (function () {

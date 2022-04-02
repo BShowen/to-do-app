@@ -1,5 +1,6 @@
 import "reset-css";
 import "./index.css";
+import "./variables.css";
 import Nav from "./uiComponents/Nav/Nav.js";
 import database from "./database.js";
 import ModalWindow from "./uiComponents/Modal/ModalWindow.js";
@@ -23,13 +24,18 @@ import ContentContainer from "./uiComponents/ContentContainer/ContentContainer.j
       tasks: {}
     };
     const savedProject = database.saveProject(project);
+
+
     /**
-     * We should call nav.newProject rather than re-rendering the entire nav 
-     * again. newProject can accept the newly saved project and simply create 
-     * a new userProjectsButton, passing in the userProjectsButton container 
-     * and the userProjectsButton will append itself to the container. 
+     * Emit "resetProjectButtonActiveStatus" BEFORE calling nav.addButton()
+     * because "resetProjectButtonActiveStatus" will reset ALL the project nav
+     * buttons and then nav.addButton() will add a new button which will be 
+     * selected by default. If we call "resetProjectButtonActiveStatus" after 
+     * nav.addButton() then the newly created project button will be styled and 
+     * immediately have its styling reset by "resetProjectButtonActiveStatus".
      */
-    // nav.render(); 
+    emitter.emit("resetProjectButtonActiveStatus");
+
     nav.addButton(savedProject);
     // Load the tasks view for this project.  
     emitter.emit("loadTasks", savedProject.id);

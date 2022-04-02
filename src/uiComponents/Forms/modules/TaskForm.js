@@ -37,6 +37,7 @@ export default class TaskForm extends Component {
 
     // The body form field. 
     this.#body = document.createElement("input");
+    this.#body.setAttribute("placeholder", "Notes");
 
     // The dueDate form field. 
     this.#dueDate = document.createElement("input");

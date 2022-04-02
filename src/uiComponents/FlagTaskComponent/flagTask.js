@@ -1,11 +1,12 @@
 /**
- import { flagTask } from "../FlagTaskComponent/flagTask.js";
  * A module to hold the code for flagging a task. 
  * The context, or in other words the 'this' keyword, is bound to the object
  * that calls this module.
  * 
  * rootNode = The node that this module will render its contents to. 
  */
+
+import "./style.css";
 const flagTask = function (rootNode) {
   let _isFlagged = false;
   const _componentContainer = document.createElement("div");
@@ -66,14 +67,20 @@ const flagTask = function (rootNode) {
 
   const disable = function () {
     _icon.removeEventListener("click", _clickHandler);
+    /**
+     * The "moveRight" class is added after the user is done editing and/or
+     * creating the task. 
+     */
+    _componentContainer.classList.add("moveRight");
   }.bind(this);
 
   // Construct this object. 
   (function () {
     _componentContainer.appendChild(_icon);
+    _componentContainer.classList.add("flagContainer");
 
     _icon.addEventListener("click", _clickHandler);
-    _icon.id = "flagInput";
+    _icon.classList.add("flagInput");
     if (_isFlagged) {
       _icon.classList.add("bi", "bi-flag-fill");
     } else {
