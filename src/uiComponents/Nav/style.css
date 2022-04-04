@@ -1,8 +1,8 @@
-:root{
+:root {
   --main-nav-bg: #F0F0F0;
 }
 
-#navContainer{
+#navContainer {
   width: 281px;
   min-height: 100vh;
   height: 100vh;
@@ -10,14 +10,14 @@
   background-color: var(--main-nav-bg);
 }
 
-#navContainer nav{
+#navContainer nav {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   min-height: 100%;
 }
 
-#defaultProjectsContainer{
+#defaultProjectsContainer {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -51,7 +51,7 @@
 }
 
 /* Default project buttons */
-#defaultProjectsContainer > div {
+#defaultProjectsContainer>div {
   background-color: var(--nav-default-button-background-color);
   margin: 0;
   flex-basis: 100px;
@@ -68,7 +68,7 @@
   align-items: flex-end;
 }
 
-#projectButtons{
+#projectButtons {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -76,15 +76,16 @@
 }
 
 /* This is the "My Lists" title in the Nav */
-#projectButtons > p {
+#projectButtons>p {
   font-family: Arial;
   font-weight: bold;
   padding: 3px;
   font-size: 0.8rem;
   color: #B0B0B0;
 }
+
 /* Button containers */
-#projectButtons > div {
+#projectButtons>div {
   width: 100%;
   height: 35px;
   display: flex;
@@ -96,7 +97,7 @@
   overflow: hidden;
 }
 
-#projectButtons > div > button {
+#projectButtons>div>button {
   height: 100%;
   display: flex;
   justify-content: space-between;
@@ -110,13 +111,13 @@
 }
 
 /* When the user project button is active */
-.active{
+.active {
   background-color: #44A1FF;
   color: white !important;
 }
 
 /* When the user project button has been selected */
-.selected{
+.selected {
   background-color: #D7D7D7;
 }
 
@@ -129,39 +130,53 @@
   padding: 10px;
 }
 
-#settingIcon{
+#settingIcon {
   font-size: 0.8rem;
   color: #717171;
 }
-#settingIcon:hover{
+
+#settingIcon:hover {
   color: #44A1FF;
 }
 
 /* Settings tippy menu */
-.tippyMenu{
+.tippyMenu {
   margin: 0;
   height: 100px;
   width: 100px;
 }
 
-.tippyMenu > .title {
+.tippyMenu>.title {
   text-align: center;
   padding: 3px;
   border-bottom: 1px solid silver;
 }
 
 /* The tippy menu when "i" is clicked */
+.tippyMenuContainer {
+  padding: 5px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
 .projectMenuButton {
   border: none;
   border-radius: 5px;
   padding: 5px;
   background-color: #057AFF;
   color: white;
+  width: 100%;
 }
+
 .defaultProject {
   background-color: #FF3B30;
 }
-.defaultProject:hover{
+
+.defaultProject:hover {
   cursor: not-allowed;
 }
 
