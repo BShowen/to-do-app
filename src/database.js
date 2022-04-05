@@ -121,7 +121,7 @@ const database = (function () {
    * ex: { projectId: 0, name: ... }
    */
   const getProject = function (projectId) {
-    return _parsedLocalStorage[projectId];
+    return _parsedLocalStorage[projectId] || false;
   }
 
   const getTasks = function (projectId) {
@@ -263,6 +263,23 @@ const database = (function () {
     return task1Date - task2Date;
   }
 
+  /**
+   * A method that deletes a project and its children. Returns a boolean.
+   */
+  const deleteProject = function (projectId) {
+    const project = getProject(projectId);
+    if (!!project) {
+      // Delete the project's children.
+      delete _parsedLocalStorage[projectId].tasks;
+
+      // Delete the project itself. 
+      delete _parsedLocalStorage[projectId];
+
+      _saveToLocalStorage();
+    }
+    return getProject(projectId) != project;
+  };
+
   return {
     saveTask,
     updateTask,
@@ -276,6 +293,7 @@ const database = (function () {
     setDefaultProject,
     getTasksWithDate,
     getFlaggedTasks,
+    deleteProject,
   }
 })();
 
