@@ -99,6 +99,13 @@ const projectMenu = function () {
     makeDefaultButton.unmount();
   }
 
+  const _deleteProject = function () {
+    if (database.deleteProject(this.projectId)) {
+      // "reloadApp" implemented in index.js
+      emitter.emit("reloadApp");
+    }
+  }.bind(this);
+
   // Initialize the "i" icon. 
   icon.addEventListener("click", _stopPropagation);
   icon.classList.add("bi", "bi-info-circle");
@@ -106,6 +113,7 @@ const projectMenu = function () {
   // Initialize the deleteButton.
   deleteButton.classList.add("projectMenuButton");
   deleteButton.addEventListener("click", _stopPropagation);
+  deleteButton.addEventListener("click", _deleteProject);
 
   // Initialize the tippy menu container.
   tippyMenuContainer.classList.add("tippyMenuContainer");

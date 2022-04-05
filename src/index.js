@@ -44,10 +44,13 @@ import ContentContainer from "./uiComponents/ContentContainer/ContentContainer.j
   emitter.on("saveNewProject", _saveNewProject);
 
   // Initialize application
-  (function () {
+  const loadApp = function () {
     nav.render();
     body.render();
     emitter.emit("loadAllProjects");
-  })();
+  };
+
+  loadApp();
+  emitter.on("reloadApp", loadApp);
 
 })();
