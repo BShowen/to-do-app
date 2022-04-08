@@ -59,7 +59,7 @@
   height: 62px;
   flex-grow: 1;
   border-radius: 0.6rem;
-  font-family: var(--project-title-font);
+  font-family: var(--Nud-Motoya-W4);
   font-size: 0.8rem;
   color: #585858;
 
@@ -105,7 +105,7 @@
   width: 100%;
   padding: 5px 10px 5px 20px;
   border: none;
-  font-family: var(--nav-button-font);
+  font-family: var(--Sebino-Regular);
   color: var(--nav-button-color);
   font-size: .9rem;
 }
@@ -188,7 +188,7 @@
   align-items: center;
   gap: 5px;
   font-size: 0.8rem;
-  font-family: var(--nav-button-font);
+  font-family: var(--Sebino-Regular);
 }
 
 .defaultCursor {

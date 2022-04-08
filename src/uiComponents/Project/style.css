@@ -6,7 +6,7 @@
   padding: 5px;
 }
 
-.projectHeader{
+.projectHeader {
   /* border-bottom: var(--border-style); */
   display: flex;
   flex-direction: row;
@@ -16,9 +16,11 @@
 .projectTitle {
   font-weight: bold;
   padding: 5px;
+  font-family: var(--Nud-Motoya-W4);
+  font-size: 1.0rem;
 }
 
-.fillColumn{
+.fillColumn {
   flex-grow: 1;
   border: 1px solid red;
 }

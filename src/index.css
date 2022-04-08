@@ -4,11 +4,6 @@ body {
   flex-wrap: nowrap;
 }
 
-.projectTitle {
-  font-family: var(--project-title-font);
-  font-size: 1.0rem;
-}
-
 .task {
   font-family: var(--default-app-font);
   font-size: 0.8rem;

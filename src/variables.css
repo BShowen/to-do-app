@@ -36,8 +36,8 @@
   --nav-button-color: #454545;
 
   /* Fonts */
-  --nav-button-font: 'Sebino Regular';
-  --default-app-font: var(--nav-button-font);
-  --project-title-font: 'Nud Motoya W4';
+  --Sebino-Regular: 'Sebino Regular';
+  --default-app-font: var(--Sebino-Regular);
+  --Nud-Motoya-W4: 'Nud Motoya W4';
   --Nud-Motoya-W6: 'Nud Motoya W6';
 }
