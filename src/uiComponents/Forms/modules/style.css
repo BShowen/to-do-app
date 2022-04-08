@@ -12,7 +12,7 @@
 
 /* Style all form's inputs to remove default styling */
 input:not([type=radio]),
-input:focus {
+input:focus:not([type=radio]) {
   display: flex;
   justify-content: flex-start;
   align-items: center;
