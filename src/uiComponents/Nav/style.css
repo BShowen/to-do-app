@@ -28,25 +28,25 @@
 
 /* When the "All" button is active */
 .All-active {
-  background-color: #5B626A !important;
+  background-color: var(--ios-default-grey) !important;
   color: white !important;
 }
 
 /* When the "Scheduled" button is active */
 .Scheduled-active {
-  background-color: #FF3B30 !important;
+  background-color: var(--ios-default-red) !important;
   color: white !important;
 }
 
 /* When the "Flagged" button is active */
 .Flagged-active {
-  background-color: #FF9500 !important;
+  background-color: var(--ios-default-orange) !important;
   color: white !important;
 }
 
 /* When the "Today" button is active */
 .Today-active {
-  background-color: #057AFF !important;
+  background-color: var(--ios-default-blue) !important;
   color: white !important;
 }
 

@@ -7,6 +7,7 @@ import { DateTime } from "luxon";
 export default class ProjectsContainer extends Component {
 
   #container;
+  #pageTitleComponent;
   #componentIsMounted = false;
 
   constructor(rootNode) {
@@ -95,6 +96,16 @@ export default class ProjectsContainer extends Component {
     });
     this.children = [];
     // Then add new children.
+    // Add the page title.
+    this.#pageTitleComponent = pageTitle({
+      titleText: "All",
+      rootNode: this.#container,
+      textColor: "Grey"
+    });
+    this.children.push(this.#pageTitleComponent);
+    this.#pageTitleComponent.render();
+
+    // Add the projects
     const projects = database.getAllProjects();
     const projectRootNode = this.#container;
     Object.values(projects).forEach(project => {
@@ -123,9 +134,19 @@ export default class ProjectsContainer extends Component {
     });
     this.children = [];
     // Then add new children.
+
+    // Add the page title.
+    this.#pageTitleComponent = pageTitle({
+      titleText: "Today",
+      rootNode: this.#container,
+      textColor: "Blue"
+    });
+    this.children.push(this.#pageTitleComponent);
+    this.#pageTitleComponent.render();
+
+    // Add the tasks.
     const allTasks = database.getTodaysTasks();
     const projectData = {
-      name: "Today",
       tasks: allTasks,
       id: database.getDefaultProject().id
     }
@@ -156,6 +177,16 @@ export default class ProjectsContainer extends Component {
     });
     this.children = [];
     // Then add new children.
+    // Add the page title.
+    this.#pageTitleComponent = pageTitle({
+      titleText: "Scheduled",
+      rootNode: this.#container,
+      textColor: "Red"
+    });
+    this.children.push(this.#pageTitleComponent);
+    this.#pageTitleComponent.render();
+
+    // Add the tasks.
     const scheduledTasks = database.getTasksWithDate();
     const projectRootNode = this.#container;
     Object.keys(scheduledTasks).forEach(date => {
@@ -228,10 +259,19 @@ export default class ProjectsContainer extends Component {
     this.children = [];
 
     // Then add new children.
+    // Add the page title.
+    this.#pageTitleComponent = pageTitle({
+      titleText: "Flagged",
+      rootNode: this.#container,
+      textColor: "Orange"
+    });
+    this.children.push(this.#pageTitleComponent);
+    this.#pageTitleComponent.render();
+
+    // Add the tasks. 
     const tasks = database.getFlaggedTasks();
     const projectRootNode = this.#container;
     const project = {
-      name: "Flagged",
       tasks: tasks,
     }
     const newProject = new Project(projectRootNode, project);
@@ -240,4 +280,33 @@ export default class ProjectsContainer extends Component {
 
     emitter.reload = this.renderScheduledProjects.bind(this);
   }
+}
+
+// A component for creating the page title. 
+const pageTitle = function ({ titleText, rootNode, textColor }) {
+  // CSS text colors
+  const textColorClass = {
+    Grey: "textColorIosGrey",
+    Red: "textColorIosRed",
+    Orange: "textColorIosOrange",
+    Blue: "textColorIosBlue"
+  }
+
+  const _container = document.createElement("div");
+  _container.classList.add("pageTitle");
+
+  const _element = document.createElement("p");
+  _element.innerText = titleText;
+  _element.classList.add(textColorClass[textColor]);
+
+  const unmount = function () {
+    _container.remove();
+  }
+
+  const render = function () {
+    rootNode.appendChild(_container);
+  }
+
+  _container.appendChild(_element);
+  return { render, unmount }
 }

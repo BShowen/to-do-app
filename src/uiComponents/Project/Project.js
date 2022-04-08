@@ -124,7 +124,7 @@ const counter = function (rootNode, title) {
 
   const _title = document.createElement("p");
   _title.classList.add("projectTitle");
-  _title.innerText = title;
+  _title.innerText = title || "";
 
   const _count = document.createElement("p");
   _count.innerText = "0";

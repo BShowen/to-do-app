@@ -5,3 +5,25 @@
   flex-direction: column;
   justify-content: flex-start;
 }
+
+.pageTitle {
+  padding: 5px;
+  font-family: var(--Nud-Motoya-W6);
+  font-size: 1.4rem;
+}
+
+.textColorIosGrey {
+  color: var(--ios-default-grey);
+}
+
+.textColorIosRed {
+  color: var(--ios-default-red);
+}
+
+.textColorIosOrange {
+  color: var(--ios-default-orange);
+}
+
+.textColorIosBlue {
+  color: var(--ios-default-blue)
+}
