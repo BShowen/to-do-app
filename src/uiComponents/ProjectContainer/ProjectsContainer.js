@@ -150,7 +150,7 @@ export default class ProjectsContainer extends Component {
       tasks: allTasks,
       id: database.getDefaultProject().id
     }
-    const project = new Project(this.#container, projectData)
+    const project = new Project(this.#container, projectData, { counter: false })
     this.children.push(project);
     project.render();
 
@@ -158,7 +158,7 @@ export default class ProjectsContainer extends Component {
      * We can load the form whenever this method is called because we know that
      * only one project is showing. 
     */
-    const formRootNode = this.#container.firstElementChild;
+    const formRootNode = this.#container.lastElementChild;
     const options = {
       dueDate: DateTime.fromFormat(new Date()
         .toLocaleDateString(), 'M/d/yyyy')

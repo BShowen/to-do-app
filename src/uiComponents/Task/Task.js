@@ -55,7 +55,11 @@ export default class Task extends Component {
     this.children.forEach((element, index) => {
       if (index <= 1) {
         // Insert the first two children into the innerContainer. 
-        this.innerContainer.appendChild(element);
+
+        if (element.innerText.length) {
+          // Dont render empty task body
+          this.innerContainer.appendChild(element);
+        }
       } else {
         /**
          * The last child needs to be inserted into a container, inputsRow.

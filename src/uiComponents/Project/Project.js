@@ -14,10 +14,12 @@ export default class Project extends Component {
   #taskCounter;
   #project;
   #editForm;
+  #options;
 
-  constructor(rootNode, project) {
+  constructor(rootNode, project, options = { counter: true }) {
     super(rootNode);
     this.#project = project;
+    this.#options = options;
   }
 
   mount() {
@@ -32,10 +34,12 @@ export default class Project extends Component {
     this.#container.classList.add("project");
 
     // counter() does not need to be inserted into this.children because is
-    // does not need to be unmounted. There are no events to be removed from 
+    // does not need to be unmounted. There are no events to be removed from
     // the DOM.
     this.#taskCounter = counter(this.#container, this.#project.name);
-    this.#taskCounter.render();
+    if (this.#options.counter) {
+      this.#taskCounter.render();
+    }
 
     this.#tasksContainer = document.createElement("div");
     this.#tasksContainer.classList.add("tasksContainer");
