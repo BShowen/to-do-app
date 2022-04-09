@@ -63,6 +63,7 @@
   color: white;
 }
 
+/* Color the color of the icon background */
 .defaultProjectButtonIconContainer.All {
   background-color: var(--ios-default-grey);
 }
@@ -77,4 +78,49 @@
 
 .defaultProjectButtonIconContainer.Flagged {
   background-color: var(--ios-default-orange);
+}
+
+/* 
+Change the color of the icon background when they have the "active" class.
+These selectors are selecting the button icon container itself, only when it has
+the "active" class on it. 
+*/
+.defaultProjectButtonIconContainer.All.active {
+  background-color: #FFFFFF;
+  color: var(--ios-default-grey);
+}
+
+.defaultProjectButtonIconContainer.Scheduled.active {
+  background-color: #FFFFFF;
+  color: var(--ios-default-red);
+}
+
+.defaultProjectButtonIconContainer.Today.active {
+  background-color: #FFFFFF;
+  color: var(--ios-default-blue);
+}
+
+.defaultProjectButtonIconContainer.Flagged.active {
+  background-color: #FFFFFF;
+  color: var(--ios-default-orange);
+}
+
+/* 
+Change the color of the icon when it is active 
+These selectors are selecting the icon itself, when it has the "active" class
+*/
+.defaultProjectButtonIconContainer.All>i.active {
+  color: var(--ios-default-grey);
+}
+
+.defaultProjectButtonIconContainer.Scheduled>i.active {
+  color: var(--ios-default-red);
+}
+
+.defaultProjectButtonIconContainer.Today>i.active {
+  color: var(--ios-default-blue);
+}
+
+.defaultProjectButtonIconContainer.Flagged>i.active {
+  color: var(--ios-default-orange);
 }

@@ -16,6 +16,14 @@ const buttonIcon = function (defaultProjectName) {
   const _container = document.createElement("div");
   const _icon = document.createElement("i");
 
+  const mount = function () {
+    this.container.appendChild(_container);
+  }.bind(this);
+
+  const unmount = function () {
+    _container.remove();
+  }.bind(this);
+
   (function () {
     _icon.classList.add(..._iconClass[defaultProjectName]);
     _container.classList.add(
@@ -25,15 +33,17 @@ const buttonIcon = function (defaultProjectName) {
     _container.appendChild(_icon);
   }.bind(this))();
 
-  const mount = function () {
-    this.container.appendChild(_container);
+  const invertColors = function () {
+    _container.classList.add("active");
+    _icon.classList.add("active");
   }.bind(this);
 
-  const unmount = function () {
-    _container.remove();
-  }.bind(this);
+  const resetColors = function () {
+    _container.classList.remove("active");
+    _icon.classList.remove("active");
+  }
 
-  return { mount, unmount }
+  return { mount, unmount, invertColors, resetColors }
 }
 
 export { buttonIcon }

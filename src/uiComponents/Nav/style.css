@@ -60,7 +60,7 @@
 }
 
 /* When the user project button is active */
-.active {
+.projectButton.active {
   background-color: #44A1FF;
   color: white !important;
 }

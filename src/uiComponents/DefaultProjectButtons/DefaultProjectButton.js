@@ -48,6 +48,7 @@ class DefaultProjectButton extends Component {
     emitter.emit("resetProjectButtonActiveStatus");
     this.addActiveClassToButton();
     emitter.emit(`load${this.#projectName}Projects`);
+    this.#buttonIcon.invertColors();
   }
 
   /**
@@ -64,6 +65,7 @@ class DefaultProjectButton extends Component {
    */
   resetActiveStatus() {
     this.container.classList.remove(`${this.#projectName}-active`);
+    this.#buttonIcon.resetColors();
   }
 }
 
