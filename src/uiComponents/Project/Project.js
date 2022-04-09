@@ -145,8 +145,14 @@ const counter = function () {
 
   const render = function () {
     _container.appendChild(_title);
+    /**
+     * When the counter is showing, font size is default. 
+     * When the counter is NOT showing, font size is small
+     */
     if (this.options.counter) {
       _container.appendChild(_count);
+    } else {
+      _title.classList.add("fontSmall");
     }
     this.container.appendChild(_container);
   }.bind(this);

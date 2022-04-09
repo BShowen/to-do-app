@@ -16,7 +16,11 @@
 .projectTitle {
   font-weight: bold;
   padding: 5px;
-  font-family: var(--Nud-Motoya-W4);
+  font-family: var(--Nud-Motoya-W6);
+  font-size: 1.9rem;
+}
+
+.fontSmall {
   font-size: 1.0rem;
 }
 
