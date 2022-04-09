@@ -9,17 +9,17 @@ import "./style.css";
  */
 export default class Project extends Component {
 
-  #container;
+  container;
   #tasksContainer;
   #taskCounter;
-  #project;
+  project;
   #editForm;
-  #options;
+  options;
 
   constructor(rootNode, project, options = { counter: true }) {
     super(rootNode);
-    this.#project = project;
-    this.#options = options;
+    this.project = project;
+    this.options = options;
   }
 
   mount() {
@@ -30,24 +30,22 @@ export default class Project extends Component {
     this.insertNewTask = this.insertNewTask.bind(this);
     emitter.on("insertNewTask", this.insertNewTask);
 
-    this.#container = document.createElement("div");
-    this.#container.classList.add("project");
+    this.container = document.createElement("div");
+    this.container.classList.add("project");
 
     // counter() does not need to be inserted into this.children because is
     // does not need to be unmounted. There are no events to be removed from
     // the DOM.
-    this.#taskCounter = counter(this.#container, this.#project.name);
-    if (this.#options.counter) {
-      this.#taskCounter.render();
-    }
+    this.#taskCounter = counter.bind(this)();
+    this.#taskCounter.render();
 
     this.#tasksContainer = document.createElement("div");
     this.#tasksContainer.classList.add("tasksContainer");
 
-    this.#container.appendChild(this.#tasksContainer);
+    this.container.appendChild(this.#tasksContainer);
 
     // Add the Project's tasks to the children array. 
-    Object.values(this.#project.tasks).forEach(taskData => {
+    Object.values(this.project.tasks).forEach(taskData => {
       const tasksRootNode = this.#tasksContainer;
       if (!taskData.completed) { //dont show completed tasks
         this.children.push(new Task(tasksRootNode, taskData));
@@ -63,7 +61,7 @@ export default class Project extends Component {
     this.children = [];
     emitter.off("insertNewTask", this.insertNewTask);
     emitter.off("taskDeleted", this.decrement);
-    this.#container.remove();
+    this.container.remove();
   }
 
   render() {
@@ -72,7 +70,7 @@ export default class Project extends Component {
     this.children.forEach(taskElement => {
       taskElement.render();
     });
-    this.rootNode.appendChild(this.#container);
+    this.rootNode.appendChild(this.container);
   }
 
   /**
@@ -105,7 +103,7 @@ export default class Project extends Component {
    * when a user creates a new task while viewing all projects.  
    */
   insertNewTask(task) {
-    if (this.#project.id == task.parentId) {
+    if (this.project.id == task.parentId) {
       // Create an instance of the task
       const newTask = new Task(this.#tasksContainer, task);
       // Add the task instance to this class's children and render 
@@ -116,19 +114,19 @@ export default class Project extends Component {
   }
 
   decrement(id) {
-    if (id == this.#project.id) {
+    if (id == this.project.id) {
       this.#taskCounter.decrement();
     }
   }
 }
 
-const counter = function (rootNode, title) {
+const counter = function () {
   const _container = document.createElement("div");
   _container.classList.add("projectHeader");
 
   const _title = document.createElement("p");
   _title.classList.add("projectTitle");
-  _title.innerText = title || "";
+  _title.innerText = this.project.name || "";
 
   const _count = document.createElement("p");
   _count.innerText = "0";
@@ -137,19 +135,21 @@ const counter = function (rootNode, title) {
     let newCount = parseInt(_count.innerText);
     newCount++;
     _count.innerText = newCount;
-  }
+  }.bind(this);
 
   const decrement = function () {
     let newCount = parseInt(_count.innerText);
     newCount--;
     _count.innerText = newCount;
-  }
+  }.bind(this);
 
   const render = function () {
     _container.appendChild(_title);
-    _container.appendChild(_count);
-    rootNode.appendChild(_container);
-  }
+    if (this.options.counter) {
+      _container.appendChild(_count);
+    }
+    this.container.appendChild(_container);
+  }.bind(this);
 
   return { render, increment, decrement }
 };

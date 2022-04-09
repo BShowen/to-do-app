@@ -109,7 +109,11 @@ export default class ProjectsContainer extends Component {
     const projects = database.getAllProjects();
     const projectRootNode = this.#container;
     Object.values(projects).forEach(project => {
-      const newProject = new Project(projectRootNode, project);
+      const newProject = new Project(
+        projectRootNode,
+        project,
+        { counter: false }
+      );
       this.children.push(newProject);
       newProject.render();
       /**
@@ -150,7 +154,11 @@ export default class ProjectsContainer extends Component {
       tasks: allTasks,
       id: database.getDefaultProject().id
     }
-    const project = new Project(this.#container, projectData, { counter: false })
+    const project = new Project(
+      this.#container,
+      projectData,
+      { counter: false }
+    );
     this.children.push(project);
     project.render();
 
@@ -196,7 +204,11 @@ export default class ProjectsContainer extends Component {
         tasks: scheduledTasks[date],
         // id: database.getDefaultProject().id
       }
-      const newProject = new Project(projectRootNode, projectData);
+      const newProject = new Project(
+        projectRootNode,
+        projectData,
+        { counter: false }
+      );
       this.children.push(newProject);
       newProject.render();
       /**
@@ -274,7 +286,11 @@ export default class ProjectsContainer extends Component {
     const project = {
       tasks: tasks,
     }
-    const newProject = new Project(projectRootNode, project);
+    const newProject = new Project(
+      projectRootNode,
+      project,
+      { counter: false }
+    );
     this.children.push(newProject);
     newProject.render();
 
