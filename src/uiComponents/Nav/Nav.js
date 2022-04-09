@@ -1,4 +1,5 @@
-import DefaultProjectButton from "./DefaultProjectButton.js";
+import DefaultProjectButton
+  from "./../DefaultProjectButtons/DefaultProjectButton.js";
 import UserProjectButton from "./UserProjectButton.js";
 import database from "./../../database.js";
 import "./style.css";

@@ -1,10 +1,14 @@
+import { buttonIcon } from "./DefaultProjectButtonIcon";
+import "./defaultProjectButton.css";
+
 /**
  * A class for creating a default project button.
  */
 class DefaultProjectButton extends Component {
-  #container;
+  container;
   #title;
   #projectName;
+  #buttonIcon;
 
   constructor(rootNode, name) {
     super(rootNode);
@@ -15,26 +19,28 @@ class DefaultProjectButton extends Component {
   }
 
   mount() {
-    this.#container = document.createElement("div");
-    this.#container.classList.add("defaultCursor");
+    this.container = document.createElement("div");
+    this.container.classList.add("defaultCursor");
     this.#title = document.createElement("p");
     this.#title.innerText = this.#projectName;
-    this.#container.addEventListener('click', this.clickHandler);
+    this.container.addEventListener('click', this.clickHandler);
 
+    this.#buttonIcon = buttonIcon.bind(this, this.#projectName)();
 
     emitter.on("resetProjectButtonActiveStatus", this.resetActiveStatus);
   }
 
   unmount() {
-    this.#container.removeEventListener('click', this.clickHandler);
+    this.container.removeEventListener('click', this.clickHandler);
     emitter.off("resetProjectButtonActiveStatus", this.resetActiveStatus);
-    this.#container.remove();
+    this.container.remove();
   }
 
   render() {
     this.mount();
-    this.#container.appendChild(this.#title);
-    this.rootNode.appendChild(this.#container);
+    this.#buttonIcon.mount();
+    this.container.appendChild(this.#title);
+    this.rootNode.appendChild(this.container);
   }
 
   clickHandler() {
@@ -48,7 +54,7 @@ class DefaultProjectButton extends Component {
    * Adds the 'active' class to the project container. 
    */
   addActiveClassToButton() {
-    this.#container.classList.add(`${this.#projectName}-active`);
+    this.container.classList.add(`${this.#projectName}-active`);
   }
 
   /**
@@ -57,7 +63,7 @@ class DefaultProjectButton extends Component {
    * styling. 
    */
   resetActiveStatus() {
-    this.#container.classList.remove(`${this.#projectName}-active`);
+    this.container.classList.remove(`${this.#projectName}-active`);
   }
 }
 

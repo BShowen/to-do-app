@@ -1,0 +1,80 @@
+#defaultProjectsContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: 5px 5px;
+}
+
+/* When the "All" button is active */
+.All-active {
+  background-color: var(--ios-default-grey) !important;
+  color: white !important;
+}
+
+/* When the "Scheduled" button is active */
+.Scheduled-active {
+  background-color: var(--ios-default-red) !important;
+  color: white !important;
+}
+
+/* When the "Flagged" button is active */
+.Flagged-active {
+  background-color: var(--ios-default-orange) !important;
+  color: white !important;
+}
+
+/* When the "Today" button is active */
+.Today-active {
+  background-color: var(--ios-default-blue) !important;
+  color: white !important;
+}
+
+/* Default project buttons */
+#defaultProjectsContainer>div {
+  background-color: var(--nav-default-button-background-color);
+  margin: 0;
+  flex-basis: 100px;
+  padding: 10px;
+  height: 62px;
+  flex-grow: 1;
+  border-radius: 0.6rem;
+  font-family: var(--Nud-Motoya-W4);
+  font-size: 0.8rem;
+  color: #585858;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* Project button Icons */
+.defaultProjectButtonIconContainer {
+  padding: 6px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+/* This is the icon themselves  */
+.defaultProjectButtonIconContainer>.bi {
+  color: white;
+}
+
+.defaultProjectButtonIconContainer.All {
+  background-color: var(--ios-default-grey);
+}
+
+.defaultProjectButtonIconContainer.Scheduled {
+  background-color: var(--ios-default-red);
+}
+
+.defaultProjectButtonIconContainer.Today {
+  background-color: var(--ios-default-blue);
+}
+
+.defaultProjectButtonIconContainer.Flagged {
+  background-color: var(--ios-default-orange);
+}
