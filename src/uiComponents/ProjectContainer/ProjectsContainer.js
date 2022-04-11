@@ -211,14 +211,10 @@ export default class ProjectsContainer extends Component {
       );
       this.children.push(newProject);
       newProject.render();
-      /**
-       * We can show the form only for the default project when this method is
-       * called. 
-       */
-      // if (project.default) {
+
+      // if (projectTitle == "Today") {
       //   const formRootNode = this.#container.lastElementChild;
-      //   const formOptions = { canRenderOnBodyClick: false };
-      //   const form = new NewTaskForm(formRootNode, project, formOptions);
+      //   const form = new NewTaskForm(formRootNode, projectData);
       //   form.mount();
       //   this.children.push(form);
       // }
@@ -260,7 +256,8 @@ export default class ProjectsContainer extends Component {
     ) {
       return "Yesterday";
     }
-    return date;
+
+    return taskDate.toFormat("ccc LLL dd");
   }
 
   renderFlaggedProjects() {

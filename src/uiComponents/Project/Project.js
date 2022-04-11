@@ -129,6 +129,7 @@ const counter = function () {
   _title.innerText = this.project.name || "";
 
   const _count = document.createElement("p");
+  _count.classList.add("taskCount");
   _count.innerText = "0";
 
   const increment = function () {
