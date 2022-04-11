@@ -1,5 +1,6 @@
 import Task from "../Task/Task.js";
 import "./style.css";
+import { tasksCompleted } from "../CompletedTasksCounter/CompletedTasks.js";
 
 /**
  * 
@@ -11,20 +12,28 @@ export default class Project extends Component {
 
   container;
   #tasksContainer;
-  #taskCounter;
+  #completedTasksContainer; //For showing completed tasks.
+  #taskCounter; //Component for keeping count of this projects tasks. 
+  #completedTasks; //Component for keeping count of completed tasks.
   project;
-  #editForm;
-  options;
+  options = {
+    counter: true,
+    completedTasksCounter: false,
+    showCompletedTasks: false,
+  };
 
-  constructor(rootNode, project, options = { counter: true }) {
+  constructor(rootNode, project, newOptions) {
     super(rootNode);
     this.project = project;
-    this.options = options;
+    this.options = Object.assign(this.options, newOptions);
   }
 
   mount() {
 
     this.decrement = this.decrement.bind(this);
+    this.moveTaskToCompleted = this.moveTaskToCompleted.bind(this);
+    emitter.on("taskCompleted", this.decrement);
+    emitter.on("taskCompleted", this.moveTaskToCompleted);
     emitter.on("taskDeleted", this.decrement);
 
     this.insertNewTask = this.insertNewTask.bind(this);
@@ -33,23 +42,43 @@ export default class Project extends Component {
     this.container = document.createElement("div");
     this.container.classList.add("project");
 
-    // counter() does not need to be inserted into this.children because is
+    // counter() does not need to be inserted into this.children because it
     // does not need to be unmounted. There are no events to be removed from
     // the DOM.
     this.#taskCounter = counter.bind(this)();
     this.#taskCounter.render();
 
+    if (this.options.completedTasksCounter) {
+      const completedTasksOptions = {
+        projectId: this.project.id,
+        showCompletedTasks: this.options.showCompletedTasks
+      };
+      this.#completedTasks = tasksCompleted.bind(this, completedTasksOptions)();
+      this.#completedTasks.render();
+    }
+
     this.#tasksContainer = document.createElement("div");
     this.#tasksContainer.classList.add("tasksContainer");
 
+    this.#completedTasksContainer = document.createElement("div");
+    this.#completedTasksContainer.classList.add("completedTasksContainer");
+
     this.container.appendChild(this.#tasksContainer);
+    this.container.appendChild(this.#completedTasksContainer);
 
     // Add the Project's tasks to the children array. 
     Object.values(this.project.tasks).forEach(taskData => {
-      const tasksRootNode = this.#tasksContainer;
-      if (!taskData.completed) { //dont show completed tasks
-        this.children.push(new Task(tasksRootNode, taskData));
-        this.#taskCounter.increment();
+
+      //dont show completed tasks
+      if (this.options.showCompletedTasks || !taskData.completed) {
+
+        // Put completed tasks in their own container. 
+        if (!taskData.completed) {
+          this.children.push(new Task(this.#tasksContainer, taskData));
+          this.#taskCounter.increment();
+        } else {
+          this.children.push(new Task(this.#completedTasksContainer, taskData));
+        }
       }
     });
   }
@@ -58,9 +87,14 @@ export default class Project extends Component {
     this.children.forEach(taskElement => {
       taskElement.unmount();
     });
+    if (this.options.completedTasksCounter) {
+      this.#completedTasks.unmount();
+    }
     this.children = [];
     emitter.off("insertNewTask", this.insertNewTask);
+    emitter.off("taskCompleted", this.decrement);
     emitter.off("taskDeleted", this.decrement);
+    emitter.off("taskCompleted", this.moveTaskToCompleted);
     this.container.remove();
   }
 
@@ -113,8 +147,21 @@ export default class Project extends Component {
     }
   }
 
-  decrement(id) {
-    if (id == this.project.id) {
+  /**
+   * Move task from main container to completed task container.
+   */
+  moveTaskToCompleted(task) {
+    if ((this.project.id == task.parentId) && this.options.showCompletedTasks) {
+      const taskComponent = this.children.find(childTask => {
+        return childTask.task.id == task.id;
+      });
+      taskComponent.rootNode = this.#completedTasksContainer;
+      taskComponent.render();
+    }
+  }
+
+  decrement(task) {
+    if (task.parentId == this.project.id) {
       this.#taskCounter.decrement();
     }
   }

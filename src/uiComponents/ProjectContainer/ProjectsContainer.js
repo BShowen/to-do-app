@@ -3,10 +3,11 @@ import "./style.css";
 import database from "../../database";
 import NewTaskForm from "../Forms/NewTaskForm";
 import { DateTime } from "luxon";
+import { tasksCompleted } from "../CompletedTasksCounter/CompletedTasks";
 
 export default class ProjectsContainer extends Component {
 
-  #container;
+  container;
   #pageTitleComponent;
   #componentIsMounted = false;
 
@@ -25,8 +26,8 @@ export default class ProjectsContainer extends Component {
     this.renderScheduledProjects = this.renderScheduledProjects.bind(this);
     this.renderFlaggedProjects = this.renderFlaggedProjects.bind(this);
 
-    this.#container = document.createElement("div");
-    this.#container.id = "projectsContainer";
+    this.container = document.createElement("div");
+    this.container.id = "projectsContainer";
 
     emitter.on("loadTasks", this.renderProject);
     emitter.on("loadAllProjects", this.renderAllProjects);
@@ -48,7 +49,7 @@ export default class ProjectsContainer extends Component {
       projectElement.unmount();
     });
     this.children = [];
-    this.#container.remove();
+    this.container.remove();
     this.#componentIsMounted = false;
   }
 
@@ -57,23 +58,29 @@ export default class ProjectsContainer extends Component {
     this.children.forEach(projectElement => {
       projectElement.render();
     });
-    this.rootNode.appendChild(this.#container);
+    this.rootNode.appendChild(this.container);
   }
 
   /**
    * This function is called whenever the user clicks on a project button in the
    * nav. It is responsible for displaying the tasks for the project. 
    */
-  renderProject(projectID) {
+  renderProject(projectID, options = { showCompletedTasks: false }) {
     // First, remove children.
     this.children.forEach(projectElement => {
       projectElement.unmount();
     });
     this.children = [];
+
     // Then add new children.
-    const project = database.getProject(projectID)
-    const projectRootNode = this.#container;
-    const newProject = new Project(projectRootNode, project);
+    // Add the project.
+    const project = database.getProject(projectID);
+    const projectRootNode = this.container;
+    const projectOptions = {
+      completedTasksCounter: true,
+      ...options
+    }
+    const newProject = new Project(projectRootNode, project, projectOptions);
     this.children.push(newProject);
     newProject.render();
 
@@ -81,15 +88,15 @@ export default class ProjectsContainer extends Component {
      * We can load the form whenever this method is called because we know that
      * only one project is showing. 
     */
-    const formRootNode = this.#container.firstElementChild;
+    const formRootNode = this.container.firstElementChild;
     const form = new NewTaskForm(formRootNode, project);
     form.mount();
     this.children.push(form);
     emitter.reload = this.renderProject.bind(this, projectID);
   }
 
-  renderAllProjects() {
-    this.#container.removeEventListener('click', this.toggleForm);
+  renderAllProjects(options = { showCompletedTasks: false }) {
+    this.container.removeEventListener('click', this.toggleForm);
     // First, remove children.
     this.children.forEach(projectElement => {
       projectElement.unmount();
@@ -99,20 +106,35 @@ export default class ProjectsContainer extends Component {
     // Add the page title.
     this.#pageTitleComponent = pageTitle({
       titleText: "All",
-      rootNode: this.#container,
+      rootNode: this.container,
       textColor: "Grey"
     });
     this.children.push(this.#pageTitleComponent);
     this.#pageTitleComponent.render();
 
+    /**
+     * Add the tasksCompleted component
+     * Pass in {...options } because the tasksCompleted component will change 
+     * the inner text from "Show" to "Hide" depending on whether or not we are
+     * currently showing completed tasks. For example, if we are showing 
+     * completed tasks then we want the component to show "Hide". If we are not 
+     * showing completed tasks then we want the component to show "Show". 
+     */
+    const completedTasks = tasksCompleted.bind(this, { ...options })();
+    this.children.push(completedTasks);
+    completedTasks.render();
+
     // Add the projects
     const projects = database.getAllProjects();
-    const projectRootNode = this.#container;
+    const projectRootNode = this.container;
     Object.values(projects).forEach(project => {
       const newProject = new Project(
         projectRootNode,
         project,
-        { counter: false }
+        {
+          counter: false,
+          ...options,
+        }
       );
       this.children.push(newProject);
       newProject.render();
@@ -121,7 +143,7 @@ export default class ProjectsContainer extends Component {
        * called. 
        */
       if (project.default) {
-        const formRootNode = this.#container.lastElementChild;
+        const formRootNode = this.container.lastElementChild;
         const formOptions = { canRenderOnBodyClick: false };
         const form = new NewTaskForm(formRootNode, project, formOptions);
         form.mount();
@@ -142,7 +164,7 @@ export default class ProjectsContainer extends Component {
     // Add the page title.
     this.#pageTitleComponent = pageTitle({
       titleText: "Today",
-      rootNode: this.#container,
+      rootNode: this.container,
       textColor: "Blue"
     });
     this.children.push(this.#pageTitleComponent);
@@ -155,7 +177,7 @@ export default class ProjectsContainer extends Component {
       id: database.getDefaultProject().id
     }
     const project = new Project(
-      this.#container,
+      this.container,
       projectData,
       { counter: false }
     );
@@ -166,7 +188,7 @@ export default class ProjectsContainer extends Component {
      * We can load the form whenever this method is called because we know that
      * only one project is showing. 
     */
-    const formRootNode = this.#container.lastElementChild;
+    const formRootNode = this.container.lastElementChild;
     const options = {
       dueDate: DateTime.fromFormat(new Date()
         .toLocaleDateString(), 'M/d/yyyy')
@@ -178,7 +200,7 @@ export default class ProjectsContainer extends Component {
     emitter.reload = this.renderTodaysProjects.bind(this);
   }
 
-  renderScheduledProjects() {
+  renderScheduledProjects(options = { showCompletedTasks: false }) {
     // First, remove children.
     this.children.forEach(projectElement => {
       projectElement.unmount();
@@ -188,7 +210,7 @@ export default class ProjectsContainer extends Component {
     // Add the page title.
     this.#pageTitleComponent = pageTitle({
       titleText: "Scheduled",
-      rootNode: this.#container,
+      rootNode: this.container,
       textColor: "Red"
     });
     this.children.push(this.#pageTitleComponent);
@@ -196,7 +218,7 @@ export default class ProjectsContainer extends Component {
 
     // Add the tasks.
     const scheduledTasks = database.getTasksWithDate();
-    const projectRootNode = this.#container;
+    const projectRootNode = this.container;
     Object.keys(scheduledTasks).forEach(date => {
       const projectTitle = this.#getDateTile(date);
       const projectData = {
@@ -207,13 +229,16 @@ export default class ProjectsContainer extends Component {
       const newProject = new Project(
         projectRootNode,
         projectData,
-        { counter: false }
+        {
+          counter: false,
+          ...options,
+        }
       );
       this.children.push(newProject);
       newProject.render();
 
       // if (projectTitle == "Today") {
-      //   const formRootNode = this.#container.lastElementChild;
+      //   const formRootNode = this.container.lastElementChild;
       //   const form = new NewTaskForm(formRootNode, projectData);
       //   form.mount();
       //   this.children.push(form);
@@ -260,7 +285,7 @@ export default class ProjectsContainer extends Component {
     return taskDate.toFormat("ccc LLL dd");
   }
 
-  renderFlaggedProjects() {
+  renderFlaggedProjects(options = { showCompletedTasks: false }) {
     // First, remove children.
     this.children.forEach(projectElement => {
       projectElement.unmount();
@@ -271,7 +296,7 @@ export default class ProjectsContainer extends Component {
     // Add the page title.
     this.#pageTitleComponent = pageTitle({
       titleText: "Flagged",
-      rootNode: this.#container,
+      rootNode: this.container,
       textColor: "Orange"
     });
     this.children.push(this.#pageTitleComponent);
@@ -279,14 +304,17 @@ export default class ProjectsContainer extends Component {
 
     // Add the tasks. 
     const tasks = database.getFlaggedTasks();
-    const projectRootNode = this.#container;
+    const projectRootNode = this.container;
     const project = {
       tasks: tasks,
     }
     const newProject = new Project(
       projectRootNode,
       project,
-      { counter: false }
+      {
+        counter: false,
+        ...options
+      }
     );
     this.children.push(newProject);
     newProject.render();
@@ -310,7 +338,9 @@ const pageTitle = function ({ titleText, rootNode, textColor }) {
 
   const _element = document.createElement("p");
   _element.innerText = titleText;
-  _element.classList.add(textColorClass[textColor]);
+  if (textColor) {
+    _element.classList.add(textColorClass[textColor]);
+  }
 
   const unmount = function () {
     _container.remove();
@@ -322,4 +352,4 @@ const pageTitle = function ({ titleText, rootNode, textColor }) {
 
   _container.appendChild(_element);
   return { render, unmount }
-}
+};

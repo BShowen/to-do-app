@@ -1,5 +1,12 @@
-.tasksContainer {
+.tasksContainer,
+.completedTasksContainer {
   padding: 5px;
+}
+
+.completedTasksContainer>div.task>div.inputs>p,
+.completedTasksContainer>div.task>div.inputs>div.inputsRow,
+.completedTasksContainer>div.task>div.inputs>input {
+  color: #808080;
 }
 
 .task {
@@ -26,7 +33,6 @@
   align-items: center;
   min-height: 19px;
   padding: 1px;
-  /* border: 1px solid red; */
 }
 
 .inputsRow {

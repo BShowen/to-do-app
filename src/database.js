@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 const database = (function () {
   /********************  Private variables and methods  ***********************/
+  const today = DateTime.now().toFormat("LL/dd/yy");
   const defaultData = {
     0: {
       name: "Personal",
@@ -9,12 +10,14 @@ const database = (function () {
         0: {
           subject: "Wash this dishes",
           body: "Make sure the dish washer is empty first!",
-          dueDate: "04/15/22"
+          dueDate: today,
+          isFlagged: true
         },
         1: {
           subject: "Do some homework",
-          body: "But I dont wanna",
-          dueDate: "04/01/22"
+          body: "Chapter 1 - 3",
+          dueDate: "04/01/22",
+          isFlagged: true,
         }
       }
     },
@@ -25,12 +28,18 @@ const database = (function () {
         0: {
           subject: "Start working on The Odin Project",
           body: "Make sure you understand JavaScript before proceeding",
-          dueDate: "04/15/22"
+          dueDate: "04/15/22",
+          isFlagged: true,
         },
         1: {
-          subject: "Get those files on the bosses desk",
-          body: "I hate that guy...",
-          dueDate: "03/15/22"
+          subject: "Ask boss for a raise",
+          body: "Just kidding...",
+          dueDate: today,
+        },
+        2: {
+          subject: "Send reports to Alex",
+          body: "Alex@gmail.com",
+          isFlagged: true,
         }
       },
     },
@@ -46,7 +55,15 @@ const database = (function () {
         1: {
           subject: "Clean the bathroom",
           body: "Bleach the tub",
-          dueDate: "03/26/22"
+          dueDate: "03/26/22",
+          isFlagged: true,
+        },
+        2: {
+          subject: "Cut the grass",
+          body: "Make sure batteries are charged",
+          dueDate: "03/26/22",
+          isFlagged: true,
+          completed: false,
         }
       },
     },
@@ -280,6 +297,34 @@ const database = (function () {
     return getProject(projectId) != project;
   };
 
+  /**
+   * A method to retrieve all of the completed tasks. 
+   */
+  const getCompletedTasks = function (projectId) {
+    if (projectId != undefined) {
+      return _getAllTasks().filter(task => {
+        return task.completed && task.parentId == projectId;
+      });
+    } else {
+      return _getAllTasks().filter(task => task.completed);
+    }
+  }
+
+  /**
+   * A method for deleting all the completed tasks associated with a project.
+   */
+  const deleteCompletedTasks = function (projectId) {
+    const allTasks = _parsedLocalStorage[projectId].tasks;
+
+    for (const taskId in allTasks) {
+      if (allTasks[taskId].completed) {
+        delete allTasks[taskId];
+      }
+    }
+
+    _saveToLocalStorage();
+  };
+
   return {
     saveTask,
     updateTask,
@@ -294,6 +339,8 @@ const database = (function () {
     getTasksWithDate,
     getFlaggedTasks,
     deleteProject,
+    getCompletedTasks,
+    deleteCompletedTasks,
   }
 })();
 

@@ -1,0 +1,25 @@
+#tasksCompletedContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 5px;
+  padding: 5px 10px;
+  border-bottom: var(--border-style);
+  font-family: var(--Sebino-Regular);
+  font-size: 0.8rem;
+}
+
+.completedTasksCount,
+.showTasksButton {
+  color: #808080;
+}
+
+.clearTasksButton {
+  color: #5B626A;
+}
+
+.showTasksButton {
+  margin: 0 0 0 auto;
+}

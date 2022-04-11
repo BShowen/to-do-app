@@ -34,12 +34,17 @@ export default class Task extends Component {
 
     this.container = document.createElement("div");
     this.container.classList.add("task");
+
     this.innerContainer = document.createElement("div");
     this.innerContainer.classList.add("inputs");
+
     this.inputsRow = document.createElement("div");
     this.inputsRow.classList.add("inputsRow");
+
     this.subjectContainer = document.createElement("p");
+
     this.bodyContainer = document.createElement("p");
+
     this.dueDateContainer = document.createElement("p"); //String MM/DD/YYYY
 
     this.editTaskForm = editTaskForm.bind(this)();

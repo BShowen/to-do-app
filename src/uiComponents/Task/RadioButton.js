@@ -18,11 +18,11 @@ export default function radioButton() {
     this.task.completed = true;
     saveTaskInDatabase();
     setTimeout(() => {
-      emitter.emit("taskDeleted", this.task.parentId);
       this.unmount(); //Remove this task from the DOM. 
       /* There is no need to call removeEvents, here. The method this.unmount() 
       will unmount the Task, and in that process this component will have it's 
       removeEvents method called by the Task class. */
+      emitter.emit("taskCompleted", this.task);
     }, 250);
   }.bind(this);
 
@@ -39,7 +39,12 @@ export default function radioButton() {
   }
 
   // Add event listeners to DOM elements
-  container.addEventListener('click', handleRadioClick);
+  if (this.task.completed) {
+    _radio.setAttribute("disabled", true);
+    _radio.setAttribute("checked", true);
+  } else {
+    container.addEventListener('click', handleRadioClick);
+  }
 
   return { container, unmount: removeEvents };
 }
