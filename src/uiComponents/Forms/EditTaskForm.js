@@ -82,7 +82,7 @@ const editTaskForm = function () {
     this.unmount();
     this.container.remove();
     // The project class needs to know so that it can decrement its task count
-    emitter.emit("taskDeleted", parentId);
+    emitter.emit("taskDeleted", this.task);
   }.bind(this);
 
   /**
