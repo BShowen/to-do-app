@@ -61,56 +61,69 @@ export default class ProjectsContainer extends Component {
     this.rootNode.appendChild(this.container);
   }
 
+  removeChildren() {
+    this.children.forEach(projectElement => {
+      projectElement.unmount();
+    });
+    this.children = [];
+  }
+
+  addPageTitle(titleText) {
+    const color = (function (titleText) {
+      const colors = {
+        "flagged": "Orange",
+        "all": "Grey",
+        "today": "Blue",
+        "scheduled": "Red"
+      }
+      return colors[titleText.toLowerCase()];
+    })(titleText);
+
+    this.#pageTitleComponent = pageTitle({
+      titleText: titleText,
+      rootNode: this.container,
+      textColor: color
+    });
+    this.children.push(this.#pageTitleComponent);
+    this.#pageTitleComponent.render();
+  }
+
   /**
    * This function is called whenever the user clicks on a project button in the
    * nav. It is responsible for displaying the tasks for the project. 
    */
   renderProject(projectID, options = { showCompletedTasks: false }) {
     // First, remove children.
-    this.children.forEach(projectElement => {
-      projectElement.unmount();
-    });
-    this.children = [];
+    this.removeChildren();
 
     // Then add new children.
     // Add the project.
-    const project = database.getProject(projectID);
+    const projectData = database.getProject(projectID);
     const projectRootNode = this.container;
     const projectOptions = {
       completedTasksCounter: true,
       ...options
     }
-    const newProject = new Project(projectRootNode, project, projectOptions);
-    this.children.push(newProject);
-    newProject.render();
+    const project = new Project(projectRootNode, projectData, projectOptions);
+    this.children.push(project);
+    project.render();
 
     /**
      * We can load the form whenever this method is called because we know that
      * only one project is showing. 
     */
     const formRootNode = this.container.firstElementChild;
-    const form = new NewTaskForm(formRootNode, project);
+    const form = new NewTaskForm(formRootNode, projectData);
     form.mount();
     this.children.push(form);
     emitter.reload = this.renderProject.bind(this, projectID);
   }
 
   renderAllProjects(options = { showCompletedTasks: false }) {
-    this.container.removeEventListener('click', this.toggleForm);
     // First, remove children.
-    this.children.forEach(projectElement => {
-      projectElement.unmount();
-    });
-    this.children = [];
-    // Then add new children.
+    this.removeChildren();
     // Add the page title.
-    this.#pageTitleComponent = pageTitle({
-      titleText: "All",
-      rootNode: this.container,
-      textColor: "Grey"
-    });
-    this.children.push(this.#pageTitleComponent);
-    this.#pageTitleComponent.render();
+    this.addPageTitle("All");
 
     /**
      * Add the tasksCompleted component
@@ -155,20 +168,11 @@ export default class ProjectsContainer extends Component {
 
   renderTodaysProjects() {
     // First, remove children.
-    this.children.forEach(projectElement => {
-      projectElement.unmount();
-    });
-    this.children = [];
+    this.removeChildren();
     // Then add new children.
 
     // Add the page title.
-    this.#pageTitleComponent = pageTitle({
-      titleText: "Today",
-      rootNode: this.container,
-      textColor: "Blue"
-    });
-    this.children.push(this.#pageTitleComponent);
-    this.#pageTitleComponent.render();
+    this.addPageTitle("Today");
 
     // Add the tasks.
     const allTasks = database.getTodaysTasks();
@@ -189,12 +193,12 @@ export default class ProjectsContainer extends Component {
      * only one project is showing. 
     */
     const formRootNode = this.container.lastElementChild;
-    const options = {
+    const formOptions = {
       dueDate: DateTime.fromFormat(new Date()
         .toLocaleDateString(), 'M/d/yyyy')
         .toFormat('yyyy-MM-dd'),
     }
-    const form = new NewTaskForm(formRootNode, projectData, options);
+    const form = new NewTaskForm(formRootNode, projectData, formOptions);
     form.mount();
     this.children.push(form);
     emitter.reload = this.renderTodaysProjects.bind(this);
@@ -202,19 +206,10 @@ export default class ProjectsContainer extends Component {
 
   renderScheduledProjects(options = { showCompletedTasks: false }) {
     // First, remove children.
-    this.children.forEach(projectElement => {
-      projectElement.unmount();
-    });
-    this.children = [];
-    // Then add new children.
+    this.removeChildren();
+
     // Add the page title.
-    this.#pageTitleComponent = pageTitle({
-      titleText: "Scheduled",
-      rootNode: this.container,
-      textColor: "Red"
-    });
-    this.children.push(this.#pageTitleComponent);
-    this.#pageTitleComponent.render();
+    this.addPageTitle("Scheduled");
 
     // Add the tasks.
     const scheduledTasks = database.getTasksWithDate();
@@ -294,13 +289,7 @@ export default class ProjectsContainer extends Component {
 
     // Then add new children.
     // Add the page title.
-    this.#pageTitleComponent = pageTitle({
-      titleText: "Flagged",
-      rootNode: this.container,
-      textColor: "Orange"
-    });
-    this.children.push(this.#pageTitleComponent);
-    this.#pageTitleComponent.render();
+    this.addPageTitle("Flagged");
 
     // Add the tasks. 
     const tasks = database.getFlaggedTasks();
