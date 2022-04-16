@@ -1,3 +1,4 @@
+import "./style.css";
 /**
  * A module to hold the code for flagging a task. 
  * The context, or in other words the 'this' keyword, is bound to the object
@@ -6,7 +7,6 @@
  * rootNode = The node that this module will render its contents to. 
  */
 
-import "./style.css";
 const flagTask = function (rootNode) {
   let _isFlagged = false;
   const _componentContainer = document.createElement("div");

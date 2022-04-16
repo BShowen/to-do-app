@@ -3,6 +3,7 @@ import { DateTime } from "luxon";
 import radioButton from "./RadioButton";
 import { editTaskForm } from "../Forms/EditTaskForm";
 import { flagTask } from "../FlagTaskComponent/flagTask";
+import { innerContainer } from "./taskInnerContainer";
 export default class Task extends Component {
   container; //div
   innerContainer; // Container to hold the subjectContainer, bodyContainer, and dueDateContainer. 
@@ -32,49 +33,55 @@ export default class Task extends Component {
       return;
     }
 
-    this.container = document.createElement("div");
-    this.container.classList.add("task");
-
-    this.innerContainer = document.createElement("div");
-    this.innerContainer.classList.add("inputs");
-
-    this.inputsRow = document.createElement("div");
-    this.inputsRow.classList.add("inputsRow");
-
-    this.subjectContainer = document.createElement("p");
-
-    this.bodyContainer = document.createElement("p");
-
-    this.dueDateContainer = document.createElement("p"); //String MM/DD/YYYY
-
+    // Initiate imported modules
+    this.#radioButton = radioButton.bind(this)()
+    this.innerContainer = innerContainer.bind(this)();
     this.editTaskForm = editTaskForm.bind(this)();
 
-    this.subjectContainer.innerText = this.task.subject;
-    this.bodyContainer.innerText = this.task.body;
-    this.dueDateContainer.innerText = this.task.dueDate || '';
-
-    this.children = [this.subjectContainer, this.bodyContainer, this.dueDateContainer];
-
+    // Bind callbacks
     this.handleClick = this.handleClick.bind(this);
-    this.#radioButton = radioButton.bind(this)()//Import RadioButton.js
-    this.children.forEach((element, index) => {
-      if (index <= 1) {
-        // Insert the first two children into the innerContainer. 
 
-        if (element.innerText.length) {
-          // Dont render empty task body
-          this.innerContainer.appendChild(element);
-        }
-      } else {
-        /**
-         * The last child needs to be inserted into a container, inputsRow.
-         * inputsRow will then be appended as the last and final child of 
-         * innerContainer.
-         */
-        this.inputsRow.appendChild(element);
-      }
+    this.container = (function () {
+      const containerNode = document.createElement("div");
+      containerNode.classList.add("task");
+      return containerNode;
+    })();
+
+    this.subjectContainer = (function () {
+      const subjectContainerNode = document.createElement("p");
+      subjectContainerNode.setAttribute("data-type", "subject");
+      subjectContainerNode.innerText = this.task.subject;
+      return subjectContainerNode;
+    }.bind(this))();
+
+    this.bodyContainer = (function () {
+      const bodyContainerNode = document.createElement("p");
+      bodyContainerNode.setAttribute("data-type", "body");
+      bodyContainerNode.innerText = this.task.body;
+      return bodyContainerNode;
+    }.bind(this))();
+
+    this.dueDateContainer = (function () {
+      //String MM/DD/YYYY
+      const dueDateContainerNode = document.createElement("p");
+      dueDateContainerNode.setAttribute("data-type", "dueDate");
+      dueDateContainerNode.innerText = this.task.dueDate || '';
+      return dueDateContainerNode;
+    }.bind(this))();
+
+    this.children = [
+      this.subjectContainer,
+      this.bodyContainer,
+      this.dueDateContainer
+    ];
+
+    // Add event listener to each child node. 
+    this.children.forEach(element => {
       element.addEventListener('click', this.handleClick);
     });
+
+    // Insert child nodes the their appropriate containers. 
+    this.innerContainer.addNodes(this.children);
 
     this.#componentIsMounted = true;
   }
@@ -93,8 +100,7 @@ export default class Task extends Component {
   render() {
     this.mount();
     this.container.appendChild(this.#radioButton.container);
-    this.container.appendChild(this.innerContainer);
-    this.innerContainer.appendChild(this.inputsRow);
+    this.container.appendChild(this.innerContainer.container);
     this.rootNode.appendChild(this.container);
     this.createFlag();
   }

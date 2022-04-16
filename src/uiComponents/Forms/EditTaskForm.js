@@ -60,10 +60,14 @@ const editTaskForm = function () {
     flag.destroy();
 
     // replace the inputs with the p tags from before. 
-    Array.from(this.innerContainer.children).forEach((element, i) => {
+    Array.from(this.innerContainer.container.children).forEach((element, i) => {
       if (i <= 1) {
         // Replace the first two children. 
-        element.replaceWith(this.children[i]);
+        if (this.children[i].innerText.length) {
+          element.replaceWith(this.children[i]);
+        } else {
+          element.remove();
+        }
       } else {
         /** 
          * The last child is from innerContainer.child is a container. The 
@@ -90,38 +94,50 @@ const editTaskForm = function () {
   * on a task's p tag. 
   */
   const _convertToInputs = function () {
-    const inputs = {
-      subject: document.createElement('input'),
-      body: document.createElement('input'),
-      dueDate: document.createElement('input'),
-    }
 
-    inputs.subject.value = this.subject;
-    inputs.subject.id = 'subject';
-    inputs.body.value = this.body
-    inputs.body.id = 'body';
-    inputs.dueDate.setAttribute("type", "date");
-    inputs.dueDate.id = 'dueDate';
+    const _subject = (function () {
+      const subjectNode = document.createElement('input');
+      subjectNode.setAttribute('data-type', 'subject');
+      subjectNode.addEventListener('input', _inputHandler);
+      subjectNode.value = this.subject;
+      subjectNode.id = 'subject';
+      return subjectNode;
+    }.bind(this))();
 
-    // Date needs to be formatted properly in order to be used as the value 
-    // (placeholder) for the date input
-    const dateTime = DateTime.fromFormat(this.dueDate, Task.DATE_FORMAT);
-    inputs.dueDate.value = dateTime.toFormat('yyyy-MM-dd');
+    const _body = (function () {
+      const bodyNode = document.createElement('input');
+      bodyNode.setAttribute('data-type', 'body');
+      bodyNode.addEventListener('input', _inputHandler);
+      bodyNode.id = 'body';
+      bodyNode.value = this.body;
+      return bodyNode;
+    }.bind(this))();
 
-    // Replace the p tags with input tags
-    this.subjectContainer.replaceWith(inputs.subject);
-    this.bodyContainer.replaceWith(inputs.body);
-    this.dueDateContainer.replaceWith(inputs.dueDate);
+    const _dueDate = (function () {
+      const dateTime = DateTime.fromFormat(this.dueDate, Task.DATE_FORMAT);
+      const dueDateNode = document.createElement('input');
+      dueDateNode.setAttribute('data-type', 'dueDate');
+      dueDateNode.addEventListener('input', _inputHandler);
+      dueDateNode.setAttribute("type", "date");
+      dueDateNode.id = 'dueDate';
+      // Date needs to be formatted properly in order to be used as the value 
+      // (placeholder) for the date input
+      dueDateNode.value = dateTime.toFormat('yyyy-MM-dd');
+      return dueDateNode;
+    }.bind(this))();
 
-    // Add listeners to each input
-    Object.values(inputs).forEach(input => {
-      input.addEventListener('input', _inputHandler);
-    });
+    const _inputs = [
+      _subject,
+      _body,
+      _dueDate
+    ];
+    this.innerContainer.clearContainer();
+    this.innerContainer.addNodes(_inputs);
 
     flag.setFlag(this.task.isFlagged);
     flag.render();
 
-    inputs.subject.focus();
+    _subject.focus();
   }.bind(this);
 
   /**
@@ -144,7 +160,8 @@ const editTaskForm = function () {
   }.bind(this);
 
   const render = function () {
-    flag = flagTask.bind(this, this.inputsRow)();
+    const flagRootNode = this.innerContainer.inputsRow;
+    flag = flagTask.bind(this, flagRootNode)();
     _convertToInputs();
     setTimeout(() => {
       document.addEventListener('click', _closeForm);
