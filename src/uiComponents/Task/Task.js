@@ -121,6 +121,8 @@ export default class Task extends Component {
     if (newDate) {
       const dateTime = DateTime.fromFormat(newDate, 'yyyy-MM-dd');
       this.dueDateContainer.innerText = dateTime.toFormat('MM/dd/yy');
+    } else {
+      this.dueDateContainer.innerText = '';
     }
   }
 
