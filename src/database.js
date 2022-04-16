@@ -235,7 +235,7 @@ const database = (function () {
 
   // A private method that retrieves all the tasks. 
   const _getAllTasks = function () {
-    let tasks = []
+    let tasks = [];
     Object.values(_parsedLocalStorage).forEach(project => {
       tasks = tasks.concat(Object.values(project.tasks));
     });
@@ -313,7 +313,33 @@ const database = (function () {
   /**
    * A method for deleting all the completed tasks associated with a project.
    */
-  const deleteCompletedTasks = function (projectId) {
+  const deleteCompletedTasks = function ({ projectId, deleteAllTasks }) {
+    if (deleteAllTasks) {
+      _deleteAllTasks();
+    } else {
+      _deleteTasksInProject(projectId);
+    }
+    _saveToLocalStorage();
+  };
+
+  /**
+   * Helper function: Deletes all the completed tasks in the DB. 
+   */
+  const _deleteAllTasks = function () {
+    Object.values(_parsedLocalStorage).forEach(project => {
+      for (const taskId in project.tasks) {
+        const task = project.tasks[taskId];
+        if (task.completed) {
+          delete project.tasks[taskId];
+        }
+      }
+    });
+  }
+
+  /**
+   * Helper function: Deletes all the completed tasks for a given project.
+   */
+  const _deleteTasksInProject = function (projectId) {
     const allTasks = _parsedLocalStorage[projectId].tasks;
 
     for (const taskId in allTasks) {
@@ -321,9 +347,7 @@ const database = (function () {
         delete allTasks[taskId];
       }
     }
-
-    _saveToLocalStorage();
-  };
+  }
 
   return {
     saveTask,

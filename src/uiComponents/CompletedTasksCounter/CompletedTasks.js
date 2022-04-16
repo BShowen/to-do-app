@@ -44,9 +44,13 @@ const tasksCompleted = function ({ projectId, showCompletedTasks }) {
     const clickHandler = function () {
       const project = this.project || false;
       if (project) {
-        database.deleteCompletedTasks(project.id);
-        emitter.reload();
+        // Clear the tasks for a project. 
+        database.deleteCompletedTasks({ projectId: project.id });
+      } else {
+        // Clear the tasks for all projects. 
+        database.deleteCompletedTasks({ deleteAllTasks: true });
       }
+      emitter.reload();
     }.bind(this);
 
     const removeListener = function () {
