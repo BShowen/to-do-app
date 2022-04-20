@@ -214,11 +214,11 @@ export default class ProjectsContainer extends Component {
     // Add the tasks.
     const scheduledTasks = database.getTasksWithDate();
     const projectRootNode = this.container;
-    Object.keys(scheduledTasks).forEach(date => {
-      const projectTitle = this.#getDateTile(date);
+    Object.keys(scheduledTasks).forEach(taskData => {
+      const projectTitle = this.#getDateTile(taskData);
       const projectData = {
         name: projectTitle,
-        tasks: scheduledTasks[date],
+        tasks: scheduledTasks[taskData],
         // id: database.getDefaultProject().id
       }
       const newProject = new Project(
@@ -308,7 +308,7 @@ export default class ProjectsContainer extends Component {
     this.children.push(newProject);
     newProject.render();
 
-    emitter.reload = this.renderScheduledProjects.bind(this);
+    emitter.reload = this.renderFlaggedProjects.bind(this);
   }
 }
 

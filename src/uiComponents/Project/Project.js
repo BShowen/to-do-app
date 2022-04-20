@@ -30,11 +30,15 @@ export default class Project extends Component {
 
   mount() {
 
+    this.moveTaskToNotCompleted = this.moveTaskToNotCompleted.bind(this);
     this.decrement = this.decrement.bind(this);
     this.moveTaskToCompleted = this.moveTaskToCompleted.bind(this);
+    this.canUnmount = this.canUnmount.bind(this);
     emitter.on("taskCompleted", this.decrement);
     emitter.on("taskCompleted", this.moveTaskToCompleted);
+    emitter.on("taskCompleted", this.canUnmount);
     emitter.on("taskDeleted", this.decrement);
+    emitter.on("taskUnChecked", this.moveTaskToNotCompleted);
 
     this.insertNewTask = this.insertNewTask.bind(this);
     emitter.on("insertNewTask", this.insertNewTask);
@@ -95,6 +99,8 @@ export default class Project extends Component {
     emitter.off("taskCompleted", this.decrement);
     emitter.off("taskDeleted", this.decrement);
     emitter.off("taskCompleted", this.moveTaskToCompleted);
+    emitter.off("taskCompleted", this.canUnmount);
+    emitter.off("taskUnChecked", this.moveTaskToNotCompleted);
     this.container.remove();
   }
 
@@ -160,9 +166,40 @@ export default class Project extends Component {
     }
   }
 
+  moveTaskToNotCompleted(task) {
+    if ((this.project.id == task.parentId) && this.options.showCompletedTasks) {
+      const taskComponent = this.children.find(childTask => {
+        return childTask.task.id == task.id;
+      });
+      taskComponent.rootNode = this.#tasksContainer;
+      taskComponent.render();
+    }
+  }
+
   decrement(task) {
     if (task.parentId == this.project.id) {
       this.#taskCounter.decrement();
+    }
+  }
+
+  canUnmount() {
+    /**
+     * id = If the project has an id, use it, otherwise assign "false" to id. 
+     */
+    const id = isNaN(this.project.id) ? false : this.project.id;
+
+    const allChildrenUnmounted = this.children.every((task) => !task.isMounted);
+
+    /**
+     * We have to user id === false because say we have an id of int 0. 
+     * Well, 0 == false is true, whereas 0 === false is false. 
+     * So, when the id is 0 or any other int, the conditional will never be true
+     * and if the id is anything but an int, then id will have the value "false"
+     * assigned to it and false === false is true, which triggers the 
+     * conditional.
+     */
+    if (id === false && allChildrenUnmounted) {
+      this.unmount();
     }
   }
 }
