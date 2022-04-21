@@ -36,12 +36,26 @@ export default function radioButton() {
 
   const removeEvents = function () {
     container.removeEventListener('click', handleRadioClick);
+    container.removeEventListener('click', unCheckRadioButton);
   }
+
+  const unCheckRadioButton = function () {
+    _radio.checked = false;
+    this.task.completed = false;
+    saveTaskInDatabase();
+    setTimeout(() => {
+      this.unmount(); //Remove this task from the DOM. 
+      /* There is no need to call removeEvents, here. The method this.unmount() 
+      will unmount the Task, and in that process this component will have it's 
+      removeEvents method called by the Task class. */
+      emitter.emit("taskUnChecked", this.task);
+    }, 250);
+  }.bind(this);
 
   // Add event listeners to DOM elements
   if (this.task.completed) {
-    _radio.setAttribute("disabled", true);
-    _radio.setAttribute("checked", true);
+    _radio.checked = true;
+    container.addEventListener('click', unCheckRadioButton);
   } else {
     container.addEventListener('click', handleRadioClick);
   }

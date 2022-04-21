@@ -166,6 +166,9 @@ export default class Project extends Component {
     }
   }
 
+  /**
+   * Move task from completed container to main task container.
+   */
   moveTaskToNotCompleted(task) {
     if ((this.project.id == task.parentId) && this.options.showCompletedTasks) {
       const taskComponent = this.children.find(childTask => {

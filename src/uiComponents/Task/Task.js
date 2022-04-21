@@ -17,7 +17,7 @@ export default class Task extends Component {
   task;
 
   // Holds the state of the mount status. 
-  #componentIsMounted = false;
+  isMounted = false;
 
   static DATE_FORMAT = 'MM/dd/yy';
 
@@ -29,7 +29,7 @@ export default class Task extends Component {
   }
 
   mount() {
-    if (this.#componentIsMounted) {
+    if (this.isMounted) {
       return;
     }
 
@@ -83,7 +83,7 @@ export default class Task extends Component {
     // Insert child nodes the their appropriate containers. 
     this.innerContainer.addNodes(this.children);
 
-    this.#componentIsMounted = true;
+    this.isMounted = true;
   }
 
   unmount() {
@@ -94,7 +94,7 @@ export default class Task extends Component {
     });
     this.children = [];
     this.container.remove();
-    this.#componentIsMounted = false;
+    this.isMounted = false;
   }
 
   render() {

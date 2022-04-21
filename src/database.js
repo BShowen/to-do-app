@@ -11,7 +11,8 @@ const database = (function () {
           subject: "Wash this dishes",
           body: "Make sure the dish washer is empty first!",
           dueDate: today,
-          isFlagged: true
+          isFlagged: true,
+          completed: false,
         },
         1: {
           subject: "Do some homework",
@@ -85,6 +86,7 @@ const database = (function () {
   }
 
   const _parsedLocalStorage = _parseLocalStorage(defaultData);
+
   /**
    * A method that is used internally by this class. 
    */
@@ -150,14 +152,12 @@ const database = (function () {
     let taskUpdated = { success: false, task: {} };
     const { parentId, id } = newTask;
     const oldTask = _getTask({ parentId, taskId: id });
-
     // If the oldTask and newTask are the same, nothing to update.
     if (!_areEqualShallow(newTask, oldTask)) {
-      _parsedLocalStorage[parentId].tasks[id] = newTask;
-      _saveToLocalStorage();
+      _parsedLocalStorage[parentId].tasks[id] = { ...newTask };
       taskUpdated = { success: true, task: newTask };
+      _saveToLocalStorage();
     }
-
     return taskUpdated;
   }
 
@@ -177,7 +177,7 @@ const database = (function () {
   }
 
   const _getTask = function ({ parentId, taskId }) {
-    return _parsedLocalStorage[parentId].tasks[taskId];
+    return { ..._parsedLocalStorage[parentId].tasks[taskId] };
   }
 
   const deleteTask = function ({ parentId, taskId }) {
@@ -349,6 +349,10 @@ const database = (function () {
     }
   }
 
+  const logStorage = function () {
+    console.log("Storage ->", { ..._parsedLocalStorage[0].tasks[0] });
+  }
+
   return {
     saveTask,
     updateTask,
@@ -365,6 +369,7 @@ const database = (function () {
     deleteProject,
     getCompletedTasks,
     deleteCompletedTasks,
+    logStorage
   }
 })();
 
