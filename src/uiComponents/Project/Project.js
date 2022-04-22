@@ -34,9 +34,9 @@ export default class Project extends Component {
     this.decrement = this.decrement.bind(this);
     this.moveTaskToCompleted = this.moveTaskToCompleted.bind(this);
     this.canUnmount = this.canUnmount.bind(this);
-    emitter.on("taskCompleted", this.decrement);
-    emitter.on("taskCompleted", this.moveTaskToCompleted);
-    emitter.on("taskCompleted", this.canUnmount);
+    emitter.on("taskChecked", this.decrement);
+    emitter.on("taskChecked", this.moveTaskToCompleted);
+    emitter.on("taskChecked", this.canUnmount);
     emitter.on("taskDeleted", this.decrement);
     emitter.on("taskUnChecked", this.moveTaskToNotCompleted);
 
@@ -96,10 +96,10 @@ export default class Project extends Component {
     }
     this.children = [];
     emitter.off("insertNewTask", this.insertNewTask);
-    emitter.off("taskCompleted", this.decrement);
+    emitter.off("taskChecked", this.decrement);
     emitter.off("taskDeleted", this.decrement);
-    emitter.off("taskCompleted", this.moveTaskToCompleted);
-    emitter.off("taskCompleted", this.canUnmount);
+    emitter.off("taskChecked", this.moveTaskToCompleted);
+    emitter.off("taskChecked", this.canUnmount);
     emitter.off("taskUnChecked", this.moveTaskToNotCompleted);
     this.container.remove();
   }
@@ -176,6 +176,7 @@ export default class Project extends Component {
       });
       taskComponent.rootNode = this.#tasksContainer;
       taskComponent.render();
+      this.#taskCounter.increment();
     }
   }
 

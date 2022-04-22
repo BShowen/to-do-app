@@ -27,7 +27,8 @@ const tasksCompleted = function ({ projectId, showCompletedTasks }) {
     }.bind(this);
 
     const removeListener = function () {
-      emitter.off("taskCompleted", updateCount);
+      emitter.off("taskChecked", updateCount);
+      emitter.off("taskUnChecked", updateCount);
     }
 
     const count = document.createElement("p");
@@ -35,7 +36,8 @@ const tasksCompleted = function ({ projectId, showCompletedTasks }) {
     count.innerText = _completeTasks.count();
     count.innerText += " Completed •";
 
-    emitter.on("taskCompleted", updateCount);
+    emitter.on("taskChecked", updateCount);
+    emitter.on("taskUnChecked", updateCount);
 
     return { container: count, unmount: removeListener };
   })()

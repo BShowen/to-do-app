@@ -22,7 +22,7 @@ export default function radioButton() {
       /* There is no need to call removeEvents, here. The method this.unmount() 
       will unmount the Task, and in that process this component will have it's 
       removeEvents method called by the Task class. */
-      emitter.emit("taskCompleted", this.task);
+      emitter.emit("taskChecked", this.task);
     }, 250);
   }.bind(this);
 
