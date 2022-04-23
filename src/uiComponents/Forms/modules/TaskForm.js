@@ -29,6 +29,8 @@ export default class TaskForm extends Component {
 
     // The subject input for the task form. 
     this.#subject = document.createElement("input");
+    this.#subject.type = "text";
+    this.#subject.classList.add("removeDefaultStyling");
 
     // Ths input handler dynamically checks and changes the validity of this
     // form as the user types into the "subject" form input.
@@ -37,10 +39,13 @@ export default class TaskForm extends Component {
 
     // The body form field. 
     this.#body = document.createElement("input");
+    this.#body.type = "text";
+    this.#body.classList.add("removeDefaultStyling");
     this.#body.setAttribute("placeholder", "Notes");
 
     // The dueDate form field. 
     this.#dueDate = document.createElement("input");
+    this.#dueDate.classList.add("removeDefaultStyling");
     this.#dueDate.setAttribute("type", "date");
 
     /**

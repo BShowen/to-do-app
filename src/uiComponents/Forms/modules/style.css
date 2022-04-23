@@ -11,8 +11,7 @@
 }
 
 /* Style all form's inputs to remove default styling */
-input:not([type=radio]),
-input:focus:not([type=radio]) {
+.removeDefaultStyling {
   display: flex;
   justify-content: flex-start;
   align-items: center;

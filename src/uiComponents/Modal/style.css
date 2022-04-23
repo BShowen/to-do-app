@@ -1,7 +1,7 @@
 #modalContainer {
   position: absolute;
-  top: 0; 
-  left: 0; 
+  top: 0;
+  left: 0;
   right: 0;
   bottom: 0;
   display: flex;
@@ -15,24 +15,57 @@
   width: 485px;
   height: 263px;
   background-color: #FFF;
+  border: 1px solid #8A8A8A;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 20px 30px 20px rgba(204, 204, 204, 0.60);
 }
 
-#modalFormContainer > div {
-  border: 1px solid red;
-  min-height: 50px;
-  flex-shrink: 1;
-  flex-grow: 1;
+#inputContainer,
+#titleContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 30px;
   padding: 10px;
+  gap: 10px;
 }
 
 #buttonContainer {
+  flex-grow: 1;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   gap: 10px;
   align-items: flex-end;
+  padding: 10px;
+}
+
+#submitButton,
+#cancelButton {
+  height: 21px;
+  padding: 3px 0;
+  width: 64px;
+  border: 1px solid #C3C3C3;
+  background-color: #FFFFFF;
+  border-radius: 7px;
+}
+
+input[type=text]#listName {
+  width: 100%;
+  font-family: var(--default-app-font);
+}
+
+#titleContainer {
+  font-family: var(--Nud-Motoya-W6);
+}
+
+#inputContainer,
+#submitButton,
+#cancelButton {
+  font-family: var(--default-app-font);
 }

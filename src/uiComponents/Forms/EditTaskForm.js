@@ -97,6 +97,8 @@ const editTaskForm = function () {
 
     const _subject = (function () {
       const subjectNode = document.createElement('input');
+      subjectNode.type = "text";
+      subjectNode.classList.add("removeDefaultStyling");
       subjectNode.setAttribute('data-type', 'subject');
       subjectNode.addEventListener('input', _inputHandler);
       subjectNode.value = this.subject;
@@ -106,6 +108,8 @@ const editTaskForm = function () {
 
     const _body = (function () {
       const bodyNode = document.createElement('input');
+      bodyNode.type = "text";
+      bodyNode.classList.add("removeDefaultStyling");
       bodyNode.setAttribute('data-type', 'body');
       bodyNode.addEventListener('input', _inputHandler);
       bodyNode.id = 'body';
@@ -116,6 +120,8 @@ const editTaskForm = function () {
     const _dueDate = (function () {
       const dateTime = DateTime.fromFormat(this.dueDate, Task.DATE_FORMAT);
       const dueDateNode = document.createElement('input');
+      dueDateNode.type = "date";
+      dueDateNode.classList.add("removeDefaultStyling");
       dueDateNode.setAttribute('data-type', 'dueDate');
       dueDateNode.addEventListener('input', _inputHandler);
       dueDateNode.setAttribute("type", "date");

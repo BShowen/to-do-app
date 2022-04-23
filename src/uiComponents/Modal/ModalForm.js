@@ -1,44 +1,91 @@
 export default class ModalForm extends Component {
 
-  #formContainer = document.createElement("div");
+  #formContainer;
+  #titleContainer;
+  #title;
 
-  #titleContainer = document.createElement("div");
-  #title = document.createElement("p");
+  #inputContainer;
+  #inputLabel;
+  #input;
 
-  #inputContainer = document.createElement("div");
-  #inputLabel = document.createElement("label");
-  #input = document.createElement("input");
-
-  #buttonContainer = document.createElement("div");
-  #submitButton = document.createElement("button");
-  #cancelButton = document.createElement("button");
+  #buttonContainer;
+  #submitButton;
+  #cancelButton;
 
   constructor(rootNode) {
     super(rootNode);
-    // Set the id attr of nodes
-    this.#formContainer.id = "modalFormContainer";
-    this.#input.id = "listName";
-    this.#buttonContainer.id = "buttonContainer";
-
-    // Set the attributes of nodes
-    this.#inputLabel.setAttribute("for", "listName");
-    this.#submitButton.disabled = true;
-
-    // Set the inner text of nodes
-    this.#title.innerText = "New List";
-    this.#inputLabel.innerText = "Name:";
-    this.#cancelButton.innerText = "Cancel";
-    this.#submitButton.innerText = "OK";
-
-    this.focus = this.focus.bind(this);
-    emitter.on("newProjectForm-focus", this.focus);
   }
 
   mount() {
+
+    this.#formContainer = (function () {
+      const formContainer = document.createElement("div");
+      formContainer.id = "modalFormContainer";
+      return formContainer;
+    })();
+
+    this.#titleContainer = (function () {
+      const titleContainer = document.createElement("div");
+      titleContainer.id = "titleContainer";
+      return titleContainer;
+    })();
+
+    this.#inputContainer = (function () {
+      const inputContainer = document.createElement("div");
+      inputContainer.id = "inputContainer";
+      return inputContainer;
+    })();
+
+    this.#buttonContainer = (function () {
+      const buttonContainer = document.createElement("div");
+      buttonContainer.id = "buttonContainer";
+      return buttonContainer;
+    })();
+
+    this.#title = (function () {
+      const title = document.createElement("p");
+      title.innerText = "New List";
+      return title;
+    })();
+
+    this.#inputLabel = (function () {
+      const inputLabel = document.createElement("label");
+      inputLabel.innerText = "Name:";
+      inputLabel.setAttribute("for", "listName");
+      return inputLabel;
+    })();
+
+    this.#input = (function () {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.id = "listName";
+      return input;
+    })();
+
+    this.#submitButton = (function () {
+      const submitButton = document.createElement("button");
+      submitButton.id = "submitButton";
+      submitButton.disabled = true;
+      submitButton.innerText = "OK";
+      return submitButton;
+    })();
+
+    this.#cancelButton = (function () {
+      const cancelButton = document.createElement("button");
+      cancelButton.id = "cancelButton";
+      cancelButton.innerText = "Cancel";
+      return cancelButton;
+    })();
+
+
+    this.focus = this.focus.bind(this);
+    emitter.on("newProjectForm-focus", this.focus);
+
     this.keydownHandler = this.keydownHandler.bind(this);
     this.validateForm = this.validateForm.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+
     // Listen for when the user to presses the Escape/Enter key.
     document.addEventListener('keydown', this.keydownHandler);
     // When the form's cancel button is clicked.
@@ -51,6 +98,9 @@ export default class ModalForm extends Component {
 
   unmount() {
     document.removeEventListener("keydown", this.keydownHandler);
+    this.#cancelButton.removeEventListener("click", this.handleCancel);
+    this.#submitButton.removeEventListener("click", this.handleSubmit);
+    this.#input.removeEventListener("click", this.validateForm);
   }
 
   /**
@@ -87,7 +137,7 @@ export default class ModalForm extends Component {
     }
   }
 
-  handleCancel(){
+  handleCancel() {
     this.clearForm();
     emitter.emit("destroyModalWindow");
   }
