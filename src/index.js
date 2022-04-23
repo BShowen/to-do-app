@@ -48,7 +48,6 @@ import ContentContainer from "./uiComponents/ContentContainer/ContentContainer.j
     nav.render();
     body.render();
     emitter.emit("loadAllProjects");
-    modal.render();
   };
 
   loadApp();

@@ -46,7 +46,7 @@
   overflow: hidden;
 }
 
-#projectButtons>div>button {
+.projectButton {
   height: 100%;
   display: flex;
   justify-content: space-between;
@@ -57,6 +57,10 @@
   font-family: var(--Sebino-Regular);
   color: var(--nav-button-color);
   font-size: .9rem;
+}
+
+.projectButton #projectNameChange {
+  background-color: #44A1FF;
 }
 
 /* When the user project button is active */

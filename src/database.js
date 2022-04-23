@@ -349,8 +349,18 @@ const database = (function () {
     }
   }
 
-  const logStorage = function () {
-    console.log("Storage ->", { ..._parsedLocalStorage[0].tasks[0] });
+  /**
+   * A method to update a projects attributes - all except for tasks. 
+   */
+  const updateProject = function (newProjectData = {}) {
+    const oldProject = getProject(newProjectData.id);
+    for (const key in newProjectData) {
+      if (key == 'tasks') {
+        continue;
+      }
+      oldProject[key] = newProjectData[key];
+    }
+    _saveToLocalStorage();
   }
 
   return {
@@ -369,7 +379,7 @@ const database = (function () {
     deleteProject,
     getCompletedTasks,
     deleteCompletedTasks,
-    logStorage
+    updateProject
   }
 })();
 

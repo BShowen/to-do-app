@@ -3,12 +3,13 @@
  * the buttons that are displayed in the nav under "My Lists"
 */
 import { projectMenu } from "./myTippyMenus";
+import { doubleClickHandler } from "./projectNameChange.js";
 export default class UserProjectButton extends Component {
   #container;
-  #button;
+  button;
   #buttonIconComponent; //This is the "i" on the Nav buttons. 
   projectId;
-  #projectName;
+  projectName;
   #componentIsMounted = false;
   options = { buttonIsActive: false };
 
@@ -16,24 +17,26 @@ export default class UserProjectButton extends Component {
   constructor(rootNode, project, options) {
     super(rootNode);
     this.project = project;
-    this.#projectName = project.name;
+    this.projectName = project.name;
     this.projectId = project.id;
     this.options = options || this.options;
   }
 
   mount() {
 
+    this.doubleClickHandler = doubleClickHandler.bind(this);
     this.clickHandler = this.clickHandler.bind(this);
     this.removeActiveStatus = this.removeActiveStatus.bind(this);
     this.resetActiveStatus = this.resetActiveStatus.bind(this);
     emitter.on("resetProjectButtonActiveStatus", this.resetActiveStatus);
 
     this.#container = document.createElement("div");
-    this.#button = document.createElement("button");
-    this.#button.addEventListener("click", this.clickHandler);
-    this.#button.innerText = this.#projectName;
-    this.#button.classList.add("projectButton");
-    this.#addIconToButton();
+    this.button = document.createElement("div");
+    this.button.addEventListener("click", this.clickHandler);
+    this.button.addEventListener("dblclick", this.doubleClickHandler);
+    this.button.innerText = this.projectName;
+    this.button.classList.add("projectButton");
+    this.addIconToButton();
     this.#componentIsMounted = true;
   }
 
@@ -44,11 +47,11 @@ export default class UserProjectButton extends Component {
   }
 
   unmount() {
-    emitter.off("removeActiveStatus", this.removeActiveStatus);
+    emitter.off("resetProjectButtonActiveStatus", this.resetActiveStatus);
     this.#buttonIconComponent.unmount();
-    this.#button.removeEventListener('click', this.clickHandler);
+    this.button.removeEventListener('click', this.clickHandler);
     this.#container.remove();
-    this.#button.remove();
+    this.button.remove();
     this.#componentIsMounted = false;
   }
 
@@ -57,16 +60,16 @@ export default class UserProjectButton extends Component {
       this.unmount();
     }
     this.mount();
-    this.#container.appendChild(this.#button);
+    this.#container.appendChild(this.button);
     this.rootNode.appendChild(this.#container);
     if (this.options.buttonIsActive) {
       this.addSelectedClassToButton();
     }
   }
 
-  #addIconToButton() {
+  addIconToButton() {
     this.#buttonIconComponent = projectMenu.bind(this)();
-    this.#button.appendChild(this.#buttonIconComponent.icon);
+    this.button.appendChild(this.#buttonIconComponent.icon);
   }
 
   /**
@@ -78,17 +81,18 @@ export default class UserProjectButton extends Component {
     const clickedClassList = Array.from(evt.target.classList);
     if (!clickedClassList.includes("active")) {
       document.removeEventListener('click', this.removeActiveStatus);
-      this.#button.classList.remove("active");
+      this.button.classList.remove("active");
       this.addSelectedClassToButton();
     }
   }
 
   /**
+   * Make the button blue.
    * Adds the 'active' class to the project button. 
    */
   addActiveClassToButton() {
     this.removeSelectedClassFromButton();
-    this.#button.classList.add("active");
+    this.button.classList.add("active");
     setTimeout(() => {
       document.addEventListener("click", this.removeActiveStatus);
     }, 0);
@@ -100,16 +104,19 @@ export default class UserProjectButton extends Component {
    * styling. 
    */
   resetActiveStatus() {
-    this.#button.classList.remove("active");
+    this.button.classList.remove("active");
     this.removeSelectedClassFromButton();
     document.removeEventListener('click', this.removeActiveStatus);
   }
 
+  /**
+   * Make the button grey
+   */
   addSelectedClassToButton() {
-    this.#button.classList.add("selected");
+    this.button.classList.add("selected");
   }
 
   removeSelectedClassFromButton() {
-    this.#button.classList.remove("selected");
+    this.button.classList.remove("selected");
   }
 }
