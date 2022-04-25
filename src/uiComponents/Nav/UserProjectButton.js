@@ -3,7 +3,7 @@
  * the buttons that are displayed in the nav under "My Lists"
 */
 import { projectMenu } from "./myTippyMenus";
-import { doubleClickHandler } from "./projectNameChange.js";
+import { renameProject } from "./projectNameChange";
 export default class UserProjectButton extends Component {
   #container;
   button;
@@ -23,8 +23,9 @@ export default class UserProjectButton extends Component {
   }
 
   mount() {
+    this.renameProject = renameProject.bind(this);
+    emitter.on("renameProject", this.renameProject);
 
-    this.doubleClickHandler = doubleClickHandler.bind(this);
     this.clickHandler = this.clickHandler.bind(this);
     this.removeActiveStatus = this.removeActiveStatus.bind(this);
     this.resetActiveStatus = this.resetActiveStatus.bind(this);
@@ -33,7 +34,6 @@ export default class UserProjectButton extends Component {
     this.#container = document.createElement("div");
     this.button = document.createElement("div");
     this.button.addEventListener("click", this.clickHandler);
-    this.button.addEventListener("dblclick", this.doubleClickHandler);
     this.button.innerText = this.projectName;
     this.button.classList.add("projectButton");
     this.addIconToButton();
@@ -47,6 +47,7 @@ export default class UserProjectButton extends Component {
   }
 
   unmount() {
+    emitter.off("renameProject", this.renameProject);
     emitter.off("resetProjectButtonActiveStatus", this.resetActiveStatus);
     this.#buttonIconComponent.unmount();
     this.button.removeEventListener('click', this.clickHandler);

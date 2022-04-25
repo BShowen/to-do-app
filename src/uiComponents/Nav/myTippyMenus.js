@@ -79,6 +79,7 @@ const projectMenu = function () {
   const tippyMenuContainer = document.createElement("div");
   const makeDefaultButton = defaultButton.bind(this)();
   const deleteButton = buttonMaker("Delete Project");
+  const renameButton = buttonMaker("Rename Project");
 
   const _stopPropagation = function (e) {
     /** 
@@ -96,6 +97,8 @@ const projectMenu = function () {
   */
   const removeListeners = function () {
     icon.removeEventListener("click", _stopPropagation);
+    deleteButton.removeEventListener('click', _deleteProject);
+    deleteButton.removeEventListener('click', _stopPropagation);
     makeDefaultButton.unmount();
   }
 
@@ -111,14 +114,20 @@ const projectMenu = function () {
   icon.classList.add("bi", "bi-info-circle");
 
   // Initialize the deleteButton.
-  deleteButton.classList.add("projectMenuButton");
   deleteButton.addEventListener("click", _stopPropagation);
   deleteButton.addEventListener("click", _deleteProject);
+
+  // Initialize the rename project button.
+  renameButton.addEventListener("click", _stopPropagation);
+  renameButton.addEventListener("click", () => {
+    emitter.emit("renameProject", this.projectId);
+  });
 
   // Initialize the tippy menu container.
   tippyMenuContainer.classList.add("tippyMenuContainer");
   tippyMenuContainer.appendChild(makeDefaultButton.button);
   tippyMenuContainer.appendChild(deleteButton);
+  tippyMenuContainer.appendChild(renameButton);
 
   // Create the popover for this icon instance, using tippy.js 
   tippy(icon, {

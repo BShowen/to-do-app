@@ -3,7 +3,11 @@ import database from "../../database";
  * When the user double clicks a projects title (in the nav) they will be able 
  * to change the title name. 
  */
-function doubleClickHandler() {
+function renameProject(projectId) {
+  if (projectId != this.projectId) {
+    return
+  }
+
   const input = (() => {
     const inputElement = document.createElement("input");
     inputElement.type = "text";
@@ -45,14 +49,16 @@ function doubleClickHandler() {
   }
 
   const _abortOnClick = () => {
-    document.addEventListener('click', _abort);
+    setTimeout(() => {
+      document.addEventListener('click', _abort);
+    }, 0);
   }
 
   this.button.innerText = '';
   this.button.appendChild(input);
-  input.focus();
   _abortOnClick();
   document.addEventListener('keydown', keydownListener);
+  input.focus();
 }
 
-export { doubleClickHandler }
+export { renameProject }
