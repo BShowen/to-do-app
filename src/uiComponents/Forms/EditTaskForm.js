@@ -2,6 +2,7 @@ import { DateTime } from "luxon";
 import Task from "./../Task/Task.js";
 import database from "../../database";
 import { flagTask } from "../FlagTaskComponent/flagTask.js";
+import { keyboard } from "../../keyboard";
 /**
  * This is the form that appears when a user is editing a task. The context 
  * of 'this' is bound to the task object. 
@@ -165,10 +166,26 @@ const editTaskForm = function () {
     }
   }.bind(this);
 
+  const _handleKeyDown = function () {
+    console.log("_handleKeyDown()");
+    keyboard.off("Enter", _handleKeyDown);
+    keyboard.off("Escape", _handleKeyDown);
+    document.removeEventListener("click", _closeForm);
+    // If the task is valid.
+    if (this.subject.length > 0) {
+      _saveTask();
+    } else {
+      _deleteTask();
+    }
+  }.bind(this);
+
   const render = function () {
     const flagRootNode = this.innerContainer.inputsRow;
     flag = flagTask.bind(this, flagRootNode)();
     _convertToInputs();
+
+    keyboard.on("Enter", _handleKeyDown, { once: true });
+    keyboard.on("Escape", _handleKeyDown, { once: true });
     setTimeout(() => {
       document.addEventListener('click', _closeForm);
     }, 0);
