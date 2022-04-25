@@ -150,10 +150,4 @@ export default class NewTaskForm extends TaskForm {
   handleEscapeKey() {
     this.#removeForm();
   }
-
-  handleKeyboardCombo() {
-    if (!this.#formIsShowing) {
-      this.show();
-    }
-  }
 }
