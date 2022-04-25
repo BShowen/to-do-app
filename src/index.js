@@ -4,7 +4,7 @@ import "./variables.css";
 import Nav from "./uiComponents/Nav/Nav.js";
 import database from "./database.js";
 import ModalWindow from "./uiComponents/Modal/ModalWindow.js";
-import ContentContainer from "./uiComponents/ContentContainer/ContentContainer.js";
+import ContentContainer from "./uiComponents/ContentContainer/ContentContainer";
 
 (function () {
   const rootNode = document.querySelector("body");
