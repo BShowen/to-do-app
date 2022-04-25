@@ -47,6 +47,15 @@ const keyboard = (function () {
         delete eventsList[eventName];
       }
     }
+
+    if (_oneTimeCallbacks.includes(callBack)) {
+      _removeOneTimeCallback(callBack);
+    }
+  }
+
+  const _removeOneTimeCallback = function (callBack) {
+    const index = _oneTimeCallbacks.indexOf(callBack);
+    _oneTimeCallbacks.splice(index, 1);
   }
 
   const _emit = function (eventName, data) {
@@ -54,16 +63,10 @@ const keyboard = (function () {
       events[eventName].forEach(function (callBack) {
         callBack(data);
         if (_oneTimeCallbacks.includes(callBack)) {
-          _removeCallBack(callBack);
           off(eventName, callBack);
         }
       });
     }
-  }
-
-  const _removeCallBack = function (callBack) {
-    const index = _oneTimeCallbacks.indexOf(callBack);
-    _oneTimeCallbacks.splice(index, 1);
   }
 
   document.addEventListener('keydown', (e) => {
