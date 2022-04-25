@@ -1,5 +1,6 @@
 import TaskForm from "./modules/TaskForm.js";
 import database from "../../database.js";
+import { keyboard } from "../../keyboard.js";
 /**
  * When a user creates a new task, this is the form that is rendered in the DOM.
  * When the user EDITS a task a different form is rendered in the DOM. 
@@ -22,12 +23,15 @@ export default class NewTaskForm extends TaskForm {
       return;
     }
     super.mount();
+    this.handleEnterKey = this.handleEnterKey.bind(this);
+    this.handleEscapeKey = this.handleEscapeKey.bind(this);
     this.show = this.show.bind(this);
     this.clickHandler = this.clickHandler.bind(this);
     document.addEventListener("click", this.clickHandler);
     emitter.on("showCreateTaskForm", this.show);
 
     this.#componentIsMounted = true;
+
   }
 
   unmount() {
@@ -39,6 +43,8 @@ export default class NewTaskForm extends TaskForm {
 
   show() {
     this.clearForm();
+    keyboard.on("Enter", this.handleEnterKey);
+    keyboard.on("Escape", this.handleEscapeKey);
     if (this.#options.dueDate) {
       /**
        * This will set the default date when the user is viewing 'todays' tasks
@@ -61,7 +67,7 @@ export default class NewTaskForm extends TaskForm {
     const flagClick = Array.from(evt.target.classList).includes("flagInput");
     const options = { buttonClick, inputClick, projectContainerClick };
     if (buttonClick || projectContainerClick || inputClick || flagClick) {
-      // The user has clicked on one of the three areas defined in the 
+      // The user has clicked on one of the four areas defined in the 
       // conditional. Now we need to determine which area was clicked and
       // respond appropriately. 
       this.#determineClickAction(options);
@@ -103,6 +109,8 @@ export default class NewTaskForm extends TaskForm {
     }
     super.clearForm();
     super.removeForm();
+    keyboard.off("Enter", this.handleEnterKey);
+    keyboard.off("Escape", this.handleEscapeKey);
     this.#formIsShowing = false;
   }
 
@@ -131,6 +139,21 @@ export default class NewTaskForm extends TaskForm {
           alert("There was an error saving your task");
         }, 0);
       }
+    }
+  }
+
+  handleEnterKey() {
+    this.#removeForm();
+    this.show();
+  }
+
+  handleEscapeKey() {
+    this.#removeForm();
+  }
+
+  handleKeyboardCombo() {
+    if (!this.#formIsShowing) {
+      this.show();
     }
   }
 }
