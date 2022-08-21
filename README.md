@@ -1,3 +1,5 @@
+![Screenshot](https://github.com/BShowen/to-do-app/blob/main/readmeImages/screenshot.png )
+
 # To-Do App
 This is a clone of Apple's reminders app. This app is written in vanilla JS with very few dependencies. 
 
